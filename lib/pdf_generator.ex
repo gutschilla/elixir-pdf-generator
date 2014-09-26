@@ -1,0 +1,2 @@
+defmodule PdfGenerator do
+end
