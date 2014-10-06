@@ -32,5 +32,5 @@ Then pass some html to PDFGenerator.generate
 TODO
 ====
 
-[ ] Use porcelain's/goon's direct IPC feature to remove the creation of intermediate tmp files.
-[ ] Pass some useful base path so wkhtmltopdf can resolve static files (styles, images etc) linked in the HTML
+    [ ] Use porcelain's/goon's direct IPC feature to remove the creation of intermediate tmp files.
+    [ ] Pass some useful base path so wkhtmltopdf can resolve static files (styles, images etc) linked in the HTML
