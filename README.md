@@ -2,6 +2,7 @@ elixir-pdf-generator
 ====================
 
 A simple wrapper for wkhtmltopdf (HTML to PDF) for use in Elixir projects.
+It is currently using temporary files instead of pipes or other means of IPC.
 
 Usage
 =====
@@ -27,3 +28,9 @@ Then pass some html to PDFGenerator.generate
     # be aware, this may take a while...
     file_name = PDFGenerator.generate( html )
     {:ok, pdf_content } = File.read( file_name )
+
+TODO
+====
+
+[ ] Use porcelain's/goon's direct IPC feature to remove the creation of intermediate tmp files.
+[ ] Pass some useful base path so wkhtmltopdf can resolve static files (styles, images etc) linked in the HTML
