@@ -35,7 +35,7 @@ defmodule PdfGenerator.Mixfile do
   defp package do
     [
      files: ["lib", "mix.exs", "README", "LICENSE", "test"], 
-     contributors: ["Martin Gutsch"],
+     maintainers: ["Martin Gutsch"],
      licenses: ["MIT"],
      links: %{
         "GitHub" => "https://github.com/gutschilla/elixir-pdf-generator"
