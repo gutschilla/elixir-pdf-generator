@@ -1,0 +1,4 @@
+%{"earmark": {:hex, :earmark, "0.1.19"},
+  "ex_doc": {:hex, :ex_doc, "0.11.2"},
+  "porcelain": {:hex, :porcelain, "2.0.1"},
+  "random": {:git, "git://github.com/gutschilla/elixir-helper-random.git", "fb801765651e8e6fa02866803592eade96b6c4d7", []}}
