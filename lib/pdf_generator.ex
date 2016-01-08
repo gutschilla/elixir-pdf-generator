@@ -32,6 +32,7 @@ defmodule PdfGenerator do
 
   use Application
   alias Porcelain.Result
+  alias Misc.Random
 
   # See http://elixir-lang.org/docs/stable/elixir/Application.html
   # for more information on OTP Applications

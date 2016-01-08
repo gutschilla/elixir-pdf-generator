@@ -5,7 +5,7 @@ defmodule PdfGenerator.Mixfile do
     [
       app: :pdf_generator,
       name: "PDF Generator",
-      version: "0.2.0",
+      version: "0.2.2",
       elixir: ">= 1.0.0",
       deps: deps,
       description: description,
@@ -48,7 +48,7 @@ defmodule PdfGenerator.Mixfile do
         # communication with external programs
         {:porcelain, "~> 2.0"},
         # a helper
-        {:random, github: "gutschilla/elixir-helper-random", tags: "0.2.4" },
+        {:misc_random, ">=0.2.5" },
         # generate docs
         {:earmark, "~> 0.1", only: :dev},
         {:ex_doc, "~> 0.7", only: :dev}
