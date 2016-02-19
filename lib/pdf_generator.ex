@@ -1,6 +1,6 @@
 defmodule PdfGenerator do
 
-  @vsn "0.2.0"
+  @vsn "0.3.0"
 
   @moduledoc """
   # PdfGenerator
@@ -8,6 +8,30 @@ defmodule PdfGenerator do
   Provides a simple wrapper around [wkhtmltopdf](http://wkhtmltopdf.org) and
   [pdftk](https://www.pdflabs.com/tools/pdftk-the-pdf-toolkit/) to generate
   possibly encrypted PDFs from an HTML source. 
+
+  # Configuration (optional)
+
+  if no or partial configuration is given, PdfGenerator will search for 
+  executables on path. This will rais an error when wkhtmltopdf cannot be
+  found.
+
+      config :pdf_generator,
+            wkhtml_path: "/path/to/wkhtmltopdf",
+            pdftk_path:  "/path/to/pdftk",
+
+  
+  In your config/config.exs. Add :pdf_generator to your mix.exs:
+  Note that this is optional but advised to as it will perform a check on
+  startup whether it can find a suitable wkhtmltopdf executable. It's
+  generally better to have an app fail at startup than at later runtime.
+    
+    def application do
+      [applications: [ .., :pdf_generator, ..], .. ]
+    end
+        
+  If you don't want to autostart, issue
+    
+    PdfGenerator.start wkhtml_path: "/path/to/wkhtml_path"
 
   # System requirements
 
@@ -32,7 +56,6 @@ defmodule PdfGenerator do
 
   use Application
   alias Porcelain.Result
-  alias Misc.Random
 
   # See http://elixir-lang.org/docs/stable/elixir/Application.html
   # for more information on OTP Applications
@@ -42,6 +65,12 @@ defmodule PdfGenerator do
       children = [
         # Define workers and child supervisors to be supervised
         # worker(TestApp.Worker, [arg1, arg2, arg3])
+        worker(
+          PdfGenerator.PathAgent, [[
+            wkhtml_path: Application.get_env(:pdf_generator, :wkhtml_path ),
+            pdftk_path:  Application.get_env(:pdf_generator, :pdftk_path  ),
+          ]]
+        )
       ]
 
       opts = [strategy: :one_for_one, name: PdfGenerator.Supervisor]
@@ -49,7 +78,7 @@ defmodule PdfGenerator do
   end
 
   # return file name of generated pdf
-  # requires: Porcelain, Random
+  # requires: Porcelain, Misc.Random
   @doc """
   Generates a pdf file from given html string. Returns a string containing a
   temporary file path for that PDF. 
@@ -78,11 +107,10 @@ defmodule PdfGenerator do
   end
 
   def generate( html, options ) do
-    wkhtml_path = System.find_executable("wkhtmltopdf")
-    if wkhtml_path == nil, do: raise "Cannot find wkhtmltopdf in path. See http://wkhtmltopdf.org"
-    html_file = Path.join System.tmp_dir, Random.string <> ".html"
+    wkhtml_path = PdfGenerator.PathAgent.get.wkhtml_path
+    html_file = Path.join System.tmp_dir, Misc.Random.string <> ".html"
     File.write html_file, html
-    pdf_file  = Path.join System.tmp_dir, Random.string <> ".pdf"
+    pdf_file  = Path.join System.tmp_dir, Misc.Random.string <> ".pdf"
 
     shell_params = [ 
       "--page-size", Keyword.get( options, :page_size ) || "A4",
@@ -108,13 +136,12 @@ defmodule PdfGenerator do
   end
 
   def encrypt_pdf( pdf_input_path, user_pw, owner_pw ) do
-    pdftk_path = System.find_executable "pdftk"
-    if pdftk_path == nil, do: raise "Cannot find pdftk in path. See https://www.pdflabs.com/tools/pdftk-the-pdf-toolkit/"
+    pdftk_path = PdfGenerator.PathAgent.get.pdftk_path
 
-    if owner_pw == nil, do: owner_pw = Random.string(16)
-    if user_pw  == nil, do: user_pw  = Random.string(16)
+    if owner_pw == nil, do: owner_pw = Misc.Random.string(16)
+    if user_pw  == nil, do: user_pw  = Misc.Random.string(16)
 
-    pdf_output_file  = Path.join System.tmp_dir, Random.string <> ".pdf"
+    pdf_output_file  = Path.join System.tmp_dir, Misc.Random.string <> ".pdf"
 
     %Result{ out: _output, status: status } = Porcelain.exec(
       pdftk_path, [ 

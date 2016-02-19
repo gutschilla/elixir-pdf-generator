@@ -5,11 +5,13 @@ defmodule PdfGenerator.Mixfile do
     [
       app: :pdf_generator,
       name: "PDF Generator",
-      version: "0.2.2",
+      version: "0.3.0",
       elixir: ">= 1.0.0",
       deps: deps,
       description: description,
-      package: package
+      package: package,
+      build_embedded: Mix.env == :prod,
+      start_permanent: Mix.env == :prod
     ]
   end
 
@@ -17,11 +19,9 @@ defmodule PdfGenerator.Mixfile do
   #
   # Type `mix help compile.app` for more information
   def application do
-    [ applications:
-        [
-            :logger,
-            :porcelain
-        ]
+    [ 
+      applications: [ :logger, :porcelain ],
+      mod: { PdfGenerator, [] }
     ]
   end
 
@@ -48,7 +48,7 @@ defmodule PdfGenerator.Mixfile do
         # communication with external programs
         {:porcelain, "~> 2.0"},
         # a helper
-        {:misc_random, ">=0.2.5" },
+        {:misc_random, ">=0.2.6" },
         # generate docs
         {:earmark, "~> 0.1", only: :dev},
         {:ex_doc, "~> 0.7", only: :dev}
