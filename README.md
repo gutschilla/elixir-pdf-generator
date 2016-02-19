@@ -51,10 +51,21 @@ html = "<html><body><p>Hi there!</p></body></html>"
 { :ok, pdf_content } = File.read file_name 
 ```
 
-For more info, read the docs or issue `h PdfGenerator.generate` in your iex shell
+# Configuration
+
+This module will automatically try to finde both `wkhtmltopdf` and `pdftk` in your path. But you may override or explicitly set their paths in your config/config.exs:
+
+```
+config :pdf_generator,
+      wkhtml_path: "/path/to/wkhtmltopdf",
+      pdftk_path:  "/path/to/pdftk",
+```
+
+# Documentation
+
+For more info, read the [docs on hex](http://hexdocs.pm/pdf_generator) or issue `h PdfGenerator` in your iex shell.
 
 TODO
 ====
 
-- [ ] Use porcelain's/goon's direct IPC feature to remove the creation of intermediate tmp files.
 - [ ] Pass some useful base path so wkhtmltopdf can resolve static files (styles, images etc) linked in the HTML
