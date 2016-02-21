@@ -40,14 +40,14 @@ Add this to your dependencies in your mix.exs:
         ]
     end
 
-Then pass some html to PDFGenerator.generate
+Then pass some html to PdfGenerator.generate
 
 ```
 $ iex -S mix
 
 html = "<html><body><p>Hi there!</p></body></html>"
 # be aware, this may take a while...
-{ :ok, file_name } = PDFGenerator.generate html, page_size: "A5", open_password: "s3cr3t" 
+{ :ok, file_name } = PdfGenerator.generate html, page_size: "A5", open_password: "s3cr3t" 
 { :ok, pdf_content } = File.read file_name 
 ```
 
