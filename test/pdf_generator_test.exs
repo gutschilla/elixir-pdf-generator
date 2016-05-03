@@ -20,4 +20,8 @@ defmodule PdfGeneratorTest do
     assert String.slice( pdf, 0, 6) == "%PDF-1"
   end
 
+  test "command prefix with noop env" do
+    {:ok, temp_filename } = PdfGenerator.generate @html, [ command_prefix: "env" ]
+  end
+
 end

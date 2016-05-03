@@ -112,26 +112,38 @@ defmodule PdfGenerator do
     File.write html_file, html
     pdf_file  = Path.join System.tmp_dir, Misc.Random.string <> ".pdf"
 
-    shell_params = [ 
+    shell_params = [
       "--page-size", Keyword.get( options, :page_size ) || "A4",
       Keyword.get( options, :shell_params ) || [] # will be flattened
     ]
 
-    %Result{ out: _output, status: status } = Porcelain.exec(
-      wkhtml_path, List.flatten( [ shell_params, html_file, pdf_file ] )
+    executable     = wkhtml_path
+    arguments      = List.flatten( [ shell_params, html_file, pdf_file ] )
+    command_prefix = Keyword.get( options, :command_prefix ) || PdfGenerator.PathAgent.get |> Map.get( :command_prefix )
+
+    # allow for xvfb-run wkhtmltopdf arg1 arg2
+    # or sudo wkhtmltopdf ...
+    { executable, arguments } =
+      case command_prefix do
+        nil -> { executable, arguments }
+        cmd -> { cmd, [executable] ++ arguments }
+      end
+
+    %Result{ out: _output, status: status, err: error } = Porcelain.exec(
+      executable, arguments, [in: "", out: :string, err: :string]
     )
 
     case status do
-      0 -> 
+      0 ->
         case Keyword.get options, :open_password do
           nil     -> { :ok, pdf_file }
-          user_pw -> encrypt_pdf( 
-            pdf_file, 
-            user_pw, 
-            Keyword.get( options, :edit_password ) 
+          user_pw -> encrypt_pdf(
+            pdf_file,
+            user_pw,
+            Keyword.get( options, :edit_password )
           )
         end
-      _ -> { :error, "wkhtmltopdf returned with nonzero vaule. This is likely du to bad shell_params" }
+      _ -> { :error, error }
     end
   end
 

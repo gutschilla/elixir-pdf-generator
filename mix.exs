@@ -5,7 +5,7 @@ defmodule PdfGenerator.Mixfile do
     [
       app: :pdf_generator,
       name: "PDF Generator",
-      version: "0.3.1",
+      version: "0.3.2",
       elixir: ">= 1.0.0",
       deps: deps,
       description: description,
@@ -27,7 +27,7 @@ defmodule PdfGenerator.Mixfile do
 
   def description do
     """
-    A simple wrapper for wkhtmltopdf (HTML to PDF) and PDFTK (adds in encryption) for use in Elixir projects.
+    A wrapper for wkhtmltopdf (HTML to PDF) and PDFTK (adds in encryption) for use in Elixir projects.
     """ 
   end
 
