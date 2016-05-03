@@ -3,14 +3,14 @@
 A simple wrapper for wkhtmltopdf (HTML to PDF) and PDFTK (adds in encryption) for use in Elixir projects.
 It is currently using temporary files instead of pipes or other means of IPC.
 
-# New in 0.3.1
+# New in 0.3.2
 
- - 0.3.1
-    - implement this as proper application, look for executables at startup (and possibly fail on that)
-    - save paths in a PfdGenerator.Agent
-    - make paths configurable in `config/ENV.exs` as well
-    - add some tests (Yay!)
-    - better README
+  - 0.3.2
+    - support for command prefixes, most notabably **xvfb-run** to let a
+      wkhtmltopdf which was compiled without an unpatched version of qt run on
+      machines without an x server
+    - (add in precompiled, patched binaries for wkhtmltopdf and libjpeg8 that are
+      needed to run wkhtmltopdf without xvfb-run)
 
 For a proper changelog, see [CHANGES](CHANGES.md)
 
@@ -53,19 +53,24 @@ html = "<html><body><p>Hi there!</p></body></html>"
 
 # Configuration
 
-This module will automatically try to finde both `wkhtmltopdf` and `pdftk` in your path. But you may override or explicitly set their paths in your config/config.exs:
+This module will automatically try to finde both `wkhtmltopdf` and `pdftk` in
+your path. But you may override or explicitly set their paths in your
+config/config.exs:
 
 ```
 config :pdf_generator,
-      wkhtml_path: "/path/to/wkhtmltopdf",
-      pdftk_path:  "/path/to/pdftk",
+    wkhtml_path:    "/usr/bin/wkhtmltopdf",
+    pdftk_path:     "/usr/bin/pdftk",
+    command_prefix: "xvfb-run"
 ```
 
 # Documentation
 
-For more info, read the [docs on hex](http://hexdocs.pm/pdf_generator) or issue `h PdfGenerator` in your iex shell.
+For more info, read the [docs on hex](http://hexdocs.pm/pdf_generator) or issue
+`h PdfGenerator` in your iex shell.
 
 TODO
 ====
 
-- [ ] Pass some useful base path so wkhtmltopdf can resolve static files (styles, images etc) linked in the HTML
+- [ ] Pass some useful base path so wkhtmltopdf can resolve static files
+  (styles, images etc) linked in the HTML

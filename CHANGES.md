@@ -1,5 +1,11 @@
 # Changes
 
+  - 0.3.2
+    - support for command prefixes, most notabably **xvfb-run** to let a
+      wkhtmltopdf which was compiled without an unpatched version of qt run on
+      machines without an x server
+    - (add in precompiled, patched binaries for wkhtmltopdf and libjpeg8 that are
+      needed to run wkhtmltopdf without xvfb-run)
   - 0.3.1
     - implement this as proper application, look for executables at startup (and possibly fail on that)
     - save paths in a PfdGenerator.Agent
