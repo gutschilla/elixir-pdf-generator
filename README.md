@@ -3,8 +3,10 @@
 A simple wrapper for wkhtmltopdf (HTML to PDF) and PDFTK (adds in encryption) for use in Elixir projects.
 It is currently using temporary files instead of pipes or other means of IPC.
 
-# New in 0.3.2
+# New in 0.3.2 and 0.3.3
 
+  - 0.3.3
+    -BUGFIX: typo in config/prod.exs
   - 0.3.2
     - support for command prefixes, most notabably **xvfb-run** to let a
       wkhtmltopdf which was compiled without an unpatched version of qt run on

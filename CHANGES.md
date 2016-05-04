@@ -1,5 +1,7 @@
 # Changes
 
+  - 0.3.3
+    -BUGFIX: typo in config/prod.exs
   - 0.3.2
     - support for command prefixes, most notabably **xvfb-run** to let a
       wkhtmltopdf which was compiled without an unpatched version of qt run on
