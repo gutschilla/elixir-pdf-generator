@@ -1,7 +1,6 @@
 # elixir-pdf-generator
 
-A simple wrapper for wkhtmltopdf (HTML to PDF) and PDFTK (adds in encryption) for use in Elixir projects.
-It is currently using temporary files instead of pipes or other means of IPC.
+A wrapper for wkhtmltopdf (HTML to PDF) and PDFTK (adds in encryption) for use in Elixir projects. If available, it will use xvfb-run (x virtual frame buffer) to use wkhtmltopdf on systems that have no X installed, e.g. a server.
 
 # New in 0.3.2 and 0.3.3
 
@@ -21,10 +20,12 @@ For a proper changelog, see [CHANGES](CHANGES.md)
 Download wkhtmltopdf and place it in your $PATH. Current binaries can be found here:
 http://wkhtmltopdf.org/downloads.html
 
-For best results, download goon and place it yout $PATH. Current binaries can be found here:
+_(optional)_ To use wkhtmltopdf on systems without an X window server installed, please install `xvfb-run` from your repository or via `homebrew` (Mac)
+
+_(optional)_ For best results, download goon and place it yout $PATH. Current binaries can be found here:
 https://github.com/alco/goon/releases
 
-Install pdftk (optional) via your package manager or homebrew. The project page also contains a Windows installer
+_(optional)_ Install pdftk (optional) via your package manager or homebrew. The project page also contains a Windows installer
 
 Add this to your dependencies in your mix.exs:
 
