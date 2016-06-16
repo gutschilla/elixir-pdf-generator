@@ -106,11 +106,23 @@ defmodule PdfGenerator do
     generate html, page_size: "A4"
   end
 
-  def generate( html, options ) do
+  def generate_on_directory( html, output_path, file_name) do
+    {_, status} = File.stat(output_path)
+    case (status) do
+      :enoent -> raise "The output directory does not have write permissions"
+      _ -> generate html, [page_size: "A4"], Path.join(output_path, file_name)
+    end
+  end
+
+  def generate( html, options, output_path \\ "") do
     wkhtml_path = PdfGenerator.PathAgent.get.wkhtml_path
     html_file = Path.join System.tmp_dir, Misc.Random.string <> ".html"
+
     File.write html_file, html
-    pdf_file  = Path.join System.tmp_dir, Misc.Random.string <> ".pdf"
+    pdf_file  = case output_path do
+      "" -> Path.join System.tmp_dir, Misc.Random.string <> ".pdf"
+      _  -> output_path
+    end
 
     shell_params = [
       "--page-size", Keyword.get( options, :page_size ) || "A4",
