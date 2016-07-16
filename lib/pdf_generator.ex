@@ -136,7 +136,7 @@ defmodule PdfGenerator do
     case status do
       0 ->
         case Keyword.get options, :open_password do
-          nil     -> { :ok, pdf_file }
+          nil     -> { :ok, pdf_file, html_file }
           user_pw -> encrypt_pdf(
             pdf_file,
             user_pw,
