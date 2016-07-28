@@ -7,11 +7,11 @@ defmodule PdfGenerator do
 
   Provides a simple wrapper around [wkhtmltopdf](http://wkhtmltopdf.org) and
   [pdftk](https://www.pdflabs.com/tools/pdftk-the-pdf-toolkit/) to generate
-  possibly encrypted PDFs from an HTML source. 
+  possibly encrypted PDFs from an HTML source.
 
   # Configuration (optional)
 
-  if no or partial configuration is given, PdfGenerator will search for 
+  if no or partial configuration is given, PdfGenerator will search for
   executables on path. This will rais an error when wkhtmltopdf cannot be
   found.
 
@@ -19,18 +19,18 @@ defmodule PdfGenerator do
             wkhtml_path: "/path/to/wkhtmltopdf",
             pdftk_path:  "/path/to/pdftk",
 
-  
+
   In your config/config.exs. Add :pdf_generator to your mix.exs:
   Note that this is optional but advised to as it will perform a check on
   startup whether it can find a suitable wkhtmltopdf executable. It's
   generally better to have an app fail at startup than at later runtime.
-    
+
     def application do
       [applications: [ .., :pdf_generator, ..], .. ]
     end
-        
+
   If you don't want to autostart, issue
-    
+
     PdfGenerator.start wkhtml_path: "/path/to/wkhtml_path"
 
   # System requirements
@@ -43,7 +43,7 @@ defmodule PdfGenerator do
   http://wkhtmltopdf.org/downloads.html
 
   **pdftk** should be available as package on your system via
-   
+
    - `apt-get install pdftk` on Debian/Ubuntu
    - `brew pdftk` on OSX (you'll need homebrew, of course)
    - Install the Exe-Installer on Windows found the project's homepage (link
@@ -81,7 +81,7 @@ defmodule PdfGenerator do
   # requires: Porcelain, Misc.Random
   @doc """
   Generates a pdf file from given html string. Returns a string containing a
-  temporary file path for that PDF. 
+  temporary file path for that PDF.
 
   options:
 
@@ -90,12 +90,14 @@ defmodule PdfGenerator do
    - edit_password: password required to edit PDF
    - shell_params: list of command-line arguments to wkhtmltopdf
      see http://wkhtmltopdf.org/usage/wkhtmltopdf.txt for all options
+   - delete_temporary: :html to remove the temporary html generated in
+     the system tmp dir
 
   # Examples
 
   pdf_path_1 = PdfGenerator.generate "<html><body><h1>Boom</h1></body></html>"
   pdf_path_2 = PdfGenerator.generate(
-    "<html><body><h1>Boom</h1></body></html>", 
+    "<html><body><h1>Boom</h1></body></html>",
     page_size:     "A5",
     open_password: "secret",
     edit_password: "g3h31m",
@@ -133,10 +135,15 @@ defmodule PdfGenerator do
       executable, arguments, [in: "", out: :string, err: :string]
     )
 
+    case Keyword.get(options, :delete_temporary) do
+      nil -> nil
+      :html -> { File.rm html_file }
+    end
+
     case status do
       0 ->
         case Keyword.get options, :open_password do
-          nil     -> { :ok, pdf_file, html_file }
+          nil     -> { :ok, pdf_file }
           user_pw -> encrypt_pdf(
             pdf_file,
             user_pw,
@@ -156,12 +163,12 @@ defmodule PdfGenerator do
     pdf_output_file  = Path.join System.tmp_dir, Misc.Random.string <> ".pdf"
 
     %Result{ out: _output, status: status } = Porcelain.exec(
-      pdftk_path, [ 
-        pdf_input_path, 
-        "output", pdf_output_file, 
+      pdftk_path, [
+        pdf_input_path,
+        "output", pdf_output_file,
         "owner_pw", owner_pw,
         "user_pw", user_pw,
-        "encrypt_128bit", 
+        "encrypt_128bit",
         "allow", "Printing", "CopyContents"
       ]
     )
