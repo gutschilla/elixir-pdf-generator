@@ -7,7 +7,7 @@ A wrapper for wkhtmltopdf (HTML to PDF) and PDFTK (adds in encryption) for use i
   - 0.3.3
     -BUGFIX: typo in config/prod.exs
   - 0.3.2
-    - support for command prefixes, most notabably **xvfb-run** to let a
+    - support for command prefixes, most notably **xvfb-run** to let a
       wkhtmltopdf which was compiled without an unpatched version of qt run on
       machines without an x server
     - (add in precompiled, patched binaries for wkhtmltopdf and libjpeg8 that are
@@ -22,7 +22,7 @@ http://wkhtmltopdf.org/downloads.html
 
 _(optional)_ To use wkhtmltopdf on systems without an X window server installed, please install `xvfb-run` from your repository or via `homebrew` (Mac)
 
-_(optional)_ For best results, download goon and place it yout $PATH. Current binaries can be found here:
+_(optional)_ For best results, download goon and place it in your $PATH. Current binaries can be found here:
 https://github.com/alco/goon/releases
 
 _(optional)_ Install pdftk (optional) via your package manager or homebrew. The project page also contains a Windows installer
