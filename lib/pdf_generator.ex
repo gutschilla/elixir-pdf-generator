@@ -135,9 +135,8 @@ defmodule PdfGenerator do
       executable, arguments, [in: "", out: :string, err: :string]
     )
 
-    case Keyword.get(options, :delete_temporary) do
-      nil -> nil
-      :html -> { File.rm html_file }
+    if Keyword.get(options, :delete_temporary) == :html do
+       File.rm html_file
     end
 
     case status do
