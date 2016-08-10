@@ -54,6 +54,21 @@ html = "<html><body><p>Hi there!</p></body></html>"
 { :ok, pdf_content } = File.read file_name 
 ```
 
+You can also create the PDF on a given directory by doing:
+
+```
+$ iex -S mix
+
+html =  "<html><body><p>Hi there!</p></body></html>"
+output_path = './here'
+output_file_name = 'test.pdf'
+{ :ok, file_name } = PdfGenerator.generate_on_directory html, output_path, output_file_name
+{ :ok, pdf_content } = File.read file_name
+# you should have now your pdf file called test.pdf on the ./here directory
+```
+
+**You might need to grant write permitions to the output directory**
+
 # Configuration
 
 This module will automatically try to finde both `wkhtmltopdf` and `pdftk` in
