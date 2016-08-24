@@ -96,7 +96,7 @@ config :pdf_generator,
 - `open_password`:    requires `pdftk`, password to encrypt PDFs with
 - `edit_password`:    requires `pdftk`, sets password for edit permissions on PDF
 - `shell_params`:     pass custom parameters to wkhtmltopdf. **CAUTION: BEWARE OF SHELL INJECTIONS!** 
-- `command_prefix`:   see "Running headless" above
+- `command_prefix`:   prefix wkhtmltopdf with some command (e.g. `xvfb-run`, `sudo` ..)
 - `delete_temporary`: immediately remove temp files after generation
 
 # Documentation

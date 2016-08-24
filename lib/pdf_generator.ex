@@ -67,8 +67,9 @@ defmodule PdfGenerator do
         # worker(TestApp.Worker, [arg1, arg2, arg3])
         worker(
           PdfGenerator.PathAgent, [[
-            wkhtml_path: Application.get_env(:pdf_generator, :wkhtml_path ),
-            pdftk_path:  Application.get_env(:pdf_generator, :pdftk_path  ),
+            wkhtml_path:    Application.get_env(:pdf_generator, :wkhtml_path),
+            pdftk_path:     Application.get_env(:pdf_generator, :pdftk_path),
+            command_prefix: Application.get_env(:pdf_generator, :command_prefix),
           ]]
         )
       ]
