@@ -69,7 +69,6 @@ defmodule PdfGenerator do
           PdfGenerator.PathAgent, [[
             wkhtml_path:    Application.get_env(:pdf_generator, :wkhtml_path),
             pdftk_path:     Application.get_env(:pdf_generator, :pdftk_path),
-            command_prefix: Application.get_env(:pdf_generator, :command_prefix),
           ]]
         )
       ]
@@ -122,7 +121,7 @@ defmodule PdfGenerator do
 
     executable     = wkhtml_path
     arguments      = List.flatten( [ shell_params, html_file, pdf_file ] )
-    command_prefix = Keyword.get( options, :command_prefix ) || PdfGenerator.PathAgent.get |> Map.get( :command_prefix )
+    command_prefix = Keyword.get( options, :command_prefix ) || Application.get_env( :pdf_generator, :command_prefix )
 
     # allow for xvfb-run wkhtmltopdf arg1 arg2
     # or sudo wkhtmltopdf ...
@@ -157,8 +156,17 @@ defmodule PdfGenerator do
   def encrypt_pdf( pdf_input_path, user_pw, owner_pw ) do
     pdftk_path = PdfGenerator.PathAgent.get.pdftk_path
 
-    if owner_pw == nil, do: owner_pw = Misc.Random.string(16)
-    if user_pw  == nil, do: user_pw  = Misc.Random.string(16)
+    owner_pw =
+      case owner_pw do
+        nil -> Misc.Random.string(16)
+        _   -> owner_pw
+      end
+
+    user_pw =
+      case user_pw do
+        nil -> Misc.Random.string(16)
+        _   -> user_pw
+      end
 
     pdf_output_file  = Path.join System.tmp_dir, Misc.Random.string <> ".pdf"
 
