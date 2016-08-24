@@ -15,13 +15,13 @@ defmodule PdfGeneratorTest do
     file_info = File.stat! temp_filename
     assert file_info.size > 0
     pdf = File.read! temp_filename
-    
+
     # PDF header should be present
     assert String.slice( pdf, 0, 6) == "%PDF-1"
   end
 
   test "command prefix with noop env" do
-    {:ok, temp_filename } = PdfGenerator.generate @html, [ command_prefix: "env" ]
+    {:ok, _temp_filename } = PdfGenerator.generate @html, [ command_prefix: "env" ]
   end
 
 end
