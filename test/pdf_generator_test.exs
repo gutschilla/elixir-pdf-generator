@@ -20,7 +20,7 @@ defmodule PdfGeneratorTest do
   end
 
   test "command prefix with noop env" do
-    {:ok, temp_filename } = PdfGenerator.generate @html, [ command_prefix: "env" ]
+    {:ok, _temp_filename } = PdfGenerator.generate @html, [ command_prefix: "env" ]
   end
 
   test "generate_binary! reads file" do
