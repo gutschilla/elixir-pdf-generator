@@ -20,15 +20,44 @@ defmodule PdfGeneratorTest do
   end
 
   test "command prefix with noop env" do
-    {:ok, _temp_filename } = PdfGenerator.generate @html, [ command_prefix: "env" ]
-  end
-
-  test "generate_binary! reads file" do
-    assert "%PDF-1" <> _pdf = PdfGenerator.generate_binary!( @html )
+    {:ok, _temp_filename } = PdfGenerator.generate @html, command_prefix: "env"
   end
 
   test "generate_binary reads file" do
-    assert {:ok, "%PDF-1" <> _pdf} = PdfGenerator.generate_binary( @html )
+    assert {:ok, "%PDF-1" <> _pdf} = @html |> PdfGenerator.generate_binary
+  end
+
+  test "generate! returns a filename" do
+    @html
+    |> PdfGenerator.generate!
+    |> File.exists?
+    |> assert
+  end
+
+  test "generate_binary! reads file" do
+    assert "%PDF-1" <> _pdf = @html |> PdfGenerator.generate_binary!
+  end
+
+  test "delete_temporary works" do
+    # w/o delete_temporary, html should be there
+    @html
+    |> PdfGenerator.generate!
+    |> String.replace( ~r(\.pdf$), ".html")
+    |> File.exists?
+    |> assert
+
+    # with delete_temporary, html file should be gone
+    @html
+    |> PdfGenerator.generate!(delete_temporary: true)
+    |> String.replace( ~r(\.pdf$), ".html")
+    |> File.exists?
+    |> refute
+
+    # cannot really be sure if temporyr file was deleted but this shouldn't
+    # crash at least. We could scan the temp dir before and after but had to
+    # make sure no other process wrote something in there which isn't exactly
+    # robust.
+    assert {:ok, "%PDF-1" <> _pdf} = @html |> PdfGenerator.generate_binary(delete_temporary: true)
   end
 
 end

@@ -1,6 +1,6 @@
 defmodule PdfGenerator do
 
-  @vsn "0.3.0"
+  @vsn "0.3.5"
 
   @moduledoc """
   # PdfGenerator
@@ -90,7 +90,7 @@ defmodule PdfGenerator do
    - edit_password: password required to edit PDF
    - shell_params: list of command-line arguments to wkhtmltopdf
      see http://wkhtmltopdf.org/usage/wkhtmltopdf.txt for all options
-   - delete_temporary: :html to remove the temporary html generated in
+   - delete_temporary: true to remove the temporary html generated in
      the system tmp dir
 
   # Examples
@@ -101,7 +101,8 @@ defmodule PdfGenerator do
     page_size:     "A5",
     open_password: "secret",
     edit_password: "g3h31m",
-    shell_params: [ "--outline", "--outline-depth3", "3" ]
+    shell_params: [ "--outline", "--outline-depth3", "3" ],
+    delete_temporary: true
   )
   """
   def generate( html ) do
@@ -109,10 +110,11 @@ defmodule PdfGenerator do
   end
 
   def generate( html, options ) do
-    wkhtml_path = PdfGenerator.PathAgent.get.wkhtml_path
-    html_file = Path.join System.tmp_dir, Misc.Random.string <> ".html"
+    wkhtml_path     = PdfGenerator.PathAgent.get.wkhtml_path
+    random_filebase = Path.join System.tmp_dir, Misc.Random.string
+    html_file       = random_filebase <> ".html"
+    pdf_file        = random_filebase <> ".pdf"
     File.write html_file, html
-    pdf_file  = Path.join System.tmp_dir, Misc.Random.string <> ".pdf"
 
     shell_params = [
       "--page-size", Keyword.get( options, :page_size ) || "A4",
@@ -135,9 +137,7 @@ defmodule PdfGenerator do
       executable, arguments, [in: "", out: :string, err: :string]
     )
 
-    if Keyword.get(options, :delete_temporary) == :html do
-       File.rm html_file
-    end
+    if Keyword.get(options, :delete_temporary), do: html_file |> File.rm
 
     case status do
       0 ->
@@ -155,27 +155,14 @@ defmodule PdfGenerator do
 
   def encrypt_pdf( pdf_input_path, user_pw, owner_pw ) do
     pdftk_path = PdfGenerator.PathAgent.get.pdftk_path
-
-    owner_pw =
-      case owner_pw do
-        nil -> Misc.Random.string(16)
-        _   -> owner_pw
-      end
-
-    user_pw =
-      case user_pw do
-        nil -> Misc.Random.string(16)
-        _   -> user_pw
-      end
-
     pdf_output_file  = Path.join System.tmp_dir, Misc.Random.string <> ".pdf"
 
     %Result{ out: _output, status: status } = Porcelain.exec(
       pdftk_path, [
         pdf_input_path,
         "output", pdf_output_file,
-        "owner_pw", owner_pw,
-        "user_pw", user_pw,
+        "owner_pw", owner_pw |> random_if_undef,
+        "user_pw",  user_pw  |> random_if_undef,
         "encrypt_128bit",
         "allow", "Printing", "CopyContents"
       ]
@@ -185,31 +172,52 @@ defmodule PdfGenerator do
       0 ->  { :ok, pdf_output_file }
       _ ->  { :error, "Encrpying the PDF via pdftk failed" }
     end
-
   end
+
+  defp random_if_undef(nil), do: Misc.Random.string(16)
+  defp random_if_undef(any), do: any
 
   @doc """
   Takes same options as `generate` but will return an
   `{:ok, binary_pdf_content}` tuple.
+
+  In case option _delete_temporary_ is true, will as well delete the temporary
+  pdf file.
   """
-  def generate_binary( options \\ [] ) do
-    result = generate options
+  def generate_binary(html, options \\ []) do
+    result = generate html, options
     case result do
-      {:ok, filename}  -> {:ok, filename |> File.read! }
+      {:ok, filename}  -> {:ok, filename |> read_and_maybe_delete(options) }
       {:error, reason} -> {:error, reason}
     end
+  end
+
+  defp read_and_maybe_delete(filename, options) do
+    content = filename |> File.read!
+    if Keyword.get(options, :delete_temporary), do: filename |> File.rm
+    content
   end
 
   @doc """
   Same as generate_binary but returns PDF content directly or raises on
   error.
   """
-  def generate_binary!( options \\ [] ) do
-    result = generate_binary options
+  def generate_binary!(html, options \\ []) do
+    result = generate_binary html, options
     case result do
       {:ok, content}   -> content
-      {:error, reason} -> raise reason
+      {:error, reason} -> raise "in-place generation failed: " <> reason
     end
   end
 
+  @doc """
+  Same as generate but returns PDF file name only (raises on error).
+  """
+  def generate!(html, options \\ []) do
+    result = generate html, options
+    case result do
+      {:ok, filename}  -> filename
+      {:error, reason} -> raise "HTML generation failed: " <> reason
+    end
+  end
 end

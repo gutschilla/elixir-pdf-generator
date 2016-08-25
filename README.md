@@ -1,9 +1,19 @@
 # elixir-pdf-generator
 
-A wrapper for wkhtmltopdf (HTML to PDF) and PDFTK (adds in encryption) for use in Elixir projects. If available, it will use xvfb-run (x virtual frame buffer) to use wkhtmltopdf on systems that have no X installed, e.g. a server.
+A wrapper for wkhtmltopdf (HTML to PDF) and PDFTK (adds in encryption) for use
+in Elixir projects. If available, it will use xvfb-run (x virtual frame buffer)
+to use wkhtmltopdf on systems that have no X installed, e.g. a server.
 
-# New in 0.3.4
+# New in 0.3.4 and 0.3.5
 
+  - 0.3.5
+    - add `generate_binray` and `generate_binary!` that immediately return the
+      PDF binary instead of an `{:ok, filename}` tuple.
+    - add `generate!` to immediately return the filename
+    - some more tests
+    - minor change `delete_temporary` must be truthy. (the old supported value
+      `:html` will stil work) and will delete both intermediate HTML And PDF
+      files in ``generate_binary` and `generate_binary!`
   - 0.3.4
     - BUGFIX: fix merge confusion to **realy** support `xvfb-run` or other
       command prefixes to wkhtmltopdf
@@ -57,8 +67,18 @@ $ iex -S mix
 
 html = "<html><body><p>Hi there!</p></body></html>"
 # be aware, this may take a while...
-{ :ok, file_name } = PdfGenerator.generate html, page_size: "A5", open_password: "s3cr3t" 
+{ :ok, filename }    = PdfGenerator.generate html, page_size: "A5", open_password: "s3cr3t" 
 { :ok, pdf_content } = File.read file_name 
+
+# or, if you prefail methods that rais on error:
+filename             = PdfGenerator.generate! html
+```
+
+Or use the bang-methods:
+
+```
+filename   = PdfGenerator.generate! "<html>..."
+pdf_binary = PdfGenerator.generate_binary! "<html>..."
 ```
 
 # Options and Configuration
