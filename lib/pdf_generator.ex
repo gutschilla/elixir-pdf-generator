@@ -179,4 +179,28 @@ defmodule PdfGenerator do
 
   end
 
+  @doc """
+  Takes same options as `generate` but will return an
+  `{:ok, binary_pdf_content}` tuple.
+  """
+  def generate_binary( options \\ [] ) do
+    result = generate options
+    case result do
+      {:ok, filename}  -> {:ok, filename |> File.read! }
+      {:error, reason} -> {:error, reason}
+    end
+  end
+
+  @doc """
+  Same as generate_binary but returns PDF content directly or raises on
+  error.
+  """
+  def generate_binary!( options \\ [] ) do
+    result = generate_binary options
+    case result do
+      {:ok, content}   -> content
+      {:error, reason} -> raise reason
+    end
+  end
+
 end
