@@ -7,9 +7,9 @@ defmodule PdfGenerator.Mixfile do
       name: "PDF Generator",
       version: "0.3.5",
       elixir: ">= 1.0.0",
-      deps: deps,
-      description: description,
-      package: package,
+      deps: deps(),
+      description: description(),
+      package: package(),
       build_embedded: Mix.env == :prod,
       start_permanent: Mix.env == :prod
     ]
