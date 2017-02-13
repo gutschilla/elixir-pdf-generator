@@ -6,6 +6,8 @@ to use wkhtmltopdf on systems that have no X installed, e.g. a server.
 
 # New in 0.3.4 and 0.3.5
 
+  - master
+    - improve REAMDE
   - 0.3.5
     - add `generate_binray` and `generate_binary!` that immediately return the
       PDF binary instead of an `{:ok, filename}` tuple.
@@ -13,9 +15,9 @@ to use wkhtmltopdf on systems that have no X installed, e.g. a server.
     - some more tests
     - minor change `delete_temporary` must be truthy. (the old supported value
       `:html` will stil work) and will delete both intermediate HTML And PDF
-      files in ``generate_binary` and `generate_binary!`
+      files in `generate_binary` and `generate_binary!`
   - 0.3.4
-    - BUGFIX: fix merge confusion to **realy** support `xvfb-run` or other
+    - BUGFIX: fix merge confusion to **really** support `xvfb-run` or other
       command prefixes to wkhtmltopdf
     - support explicit deletion of temporary files thanks to
       [Edipo Vinicius da Silva](https://github.com/edipox)
@@ -56,7 +58,7 @@ Add this to your dependencies in your mix.exs:
     defp deps do
         [
             # ... whatever else
-            { :pdf_generator, ">=0.3.0" }, # <-- and this
+            { :pdf_generator, ">=0.3.5" }, # <-- and this
         ]
     end
 
@@ -67,7 +69,7 @@ $ iex -S mix
 
 html = "<html><body><p>Hi there!</p></body></html>"
 # be aware, this may take a while...
-{ :ok, filename }    = PdfGenerator.generate html, page_size: "A5", open_password: "s3cr3t" 
+{ :ok, filename }    = PdfGenerator.generate html, page_size: "A5"
 { :ok, pdf_content } = File.read file_name 
 
 # or, if you prefail methods that rais on error:
@@ -89,8 +91,8 @@ your path. But you may override or explicitly set their paths in your
 
 ```
 config :pdf_generator,
-    wkhtml_path:    "/usr/bin/wkhtmltopdf",
-    pdftk_path:     "/usr/bin/pdftk"
+    wkhtml_path:    "/usr/bin/wkhtmltopdf",   # <-- this program actually does the heavy lifting
+    pdftk_path:     "/usr/bin/pdftk"          # <-- only needed for PDF encryption
 ```
 
 ## Running headless (server-mode)
