@@ -8,6 +8,7 @@ to use wkhtmltopdf on systems that have no X installed, e.g. a server.
 
   - master
     - improve REAMDE
+    - add option to pick output pdf filename
   - 0.3.5
     - add `generate_binray` and `generate_binary!` that immediately return the
       PDF binary instead of an `{:ok, filename}` tuple.
@@ -120,6 +121,8 @@ config :pdf_generator,
 - `shell_params`:     pass custom parameters to wkhtmltopdf. **CAUTION: BEWARE OF SHELL INJECTIONS!** 
 - `command_prefix`:   prefix wkhtmltopdf with some command (e.g. `xvfb-run`, `sudo` ..)
 - `delete_temporary`: immediately remove temp files after generation
+- `filename` - filename you want for the output PDF (provide without .pdf extension),
+     defaults to a random string
 
 # Documentation
 

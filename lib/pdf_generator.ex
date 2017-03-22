@@ -87,17 +87,12 @@ defmodule PdfGenerator do
   ## Options
 
    * `:page_size` - output page size, defaults to "A4"
-
    * `:open_password` - password required to open PDF. Will apply encryption to PDF
-
    * `:edit_password` - password required to edit PDF
-
    * `:shell_params` - list of command-line arguments to wkhtmltopdf
      see http://wkhtmltopdf.org/usage/wkhtmltopdf.txt for all options
-
    * `:delete_temporary` - true to remove the temporary html generated in
      the system tmp dir
-
    * `:filename` - filename you want for the output PDF (provide without .pdf extension),
      defaults to a random string
 
