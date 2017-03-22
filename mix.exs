@@ -49,6 +49,8 @@ defmodule PdfGenerator.Mixfile do
         {:porcelain, "~> 2.0"},
         # a helper
         {:misc_random, ">=0.2.6" },
+        # filename sanitizer
+        {:zarex, "~> 0.2"},
         # generate docs
         {:earmark, "~> 0.1", only: :dev},
         {:ex_doc, "~> 0.7", only: :dev}

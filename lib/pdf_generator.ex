@@ -78,20 +78,28 @@ defmodule PdfGenerator do
   end
 
   # return file name of generated pdf
-  # requires: Porcelain, Misc.Random
+  # requires: Porcelain, Misc.Random, zarex
+
   @doc """
   Generates a pdf file from given html string. Returns a string containing a
   temporary file path for that PDF.
 
-  options:
+  ## Options
 
-   - page_size: output page size, defaults to "A4"
-   - open_password: password required to open PDF. Will apply encryption to PDF
-   - edit_password: password required to edit PDF
-   - shell_params: list of command-line arguments to wkhtmltopdf
+   * `:page_size` - output page size, defaults to "A4"
+
+   * `:open_password` - password required to open PDF. Will apply encryption to PDF
+
+   * `:edit_password` - password required to edit PDF
+
+   * `:shell_params` - list of command-line arguments to wkhtmltopdf
      see http://wkhtmltopdf.org/usage/wkhtmltopdf.txt for all options
-   - delete_temporary: true to remove the temporary html generated in
+
+   * `:delete_temporary` - true to remove the temporary html generated in
      the system tmp dir
+
+   * `:filename` - filename you want for the output PDF (provide without .pdf extension),
+     defaults to a random string
 
   # Examples
 
@@ -102,7 +110,8 @@ defmodule PdfGenerator do
     open_password: "secret",
     edit_password: "g3h31m",
     shell_params: [ "--outline", "--outline-depth3", "3" ],
-    delete_temporary: true
+    delete_temporary: true,
+    filename: "my_awesome_pdf"
   )
   """
   def generate( html ) do
@@ -111,9 +120,9 @@ defmodule PdfGenerator do
 
   def generate( html, options ) do
     wkhtml_path     = PdfGenerator.PathAgent.get.wkhtml_path
-    random_filebase = Path.join System.tmp_dir, Misc.Random.string
-    html_file       = random_filebase <> ".html"
-    pdf_file        = random_filebase <> ".pdf"
+    filebase        = generate_filebase(options[:filename]) 
+    html_file       = filebase <> ".html"
+    pdf_file        = filebase <> ".pdf"
     File.write html_file, html
 
     shell_params = [
@@ -152,6 +161,9 @@ defmodule PdfGenerator do
       _ -> { :error, error }
     end
   end
+
+  defp generate_filebase(nil), do: generate_filebase(Misc.Random.string)
+  defp generate_filebase(filename), do: Path.join(System.tmp_dir, Zarex.sanitize(filename))
 
   def encrypt_pdf( pdf_input_path, user_pw, owner_pw ) do
     pdftk_path = PdfGenerator.PathAgent.get.pdftk_path
