@@ -34,6 +34,12 @@ defmodule PdfGeneratorTest do
     |> assert
   end
 
+  test "generate! with filename option returns custom filename" do
+    filename = PdfGenerator.generate!(@html, filename: "custom_file_name")
+    assert File.exists?(filename)
+    assert Path.basename(filename, ".pdf") == "custom_file_name"
+  end
+
   test "generate_binary! reads file" do
     assert "%PDF-1" <> _pdf = @html |> PdfGenerator.generate_binary!
   end
