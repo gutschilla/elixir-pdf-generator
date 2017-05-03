@@ -121,6 +121,19 @@ config :pdf_generator,
 - `command_prefix`:   prefix wkhtmltopdf with some command (e.g. `xvfb-run`, `sudo` ..)
 - `delete_temporary`: immediately remove temp files after generation
 
+## Heroku Setup
+
+If you are using this with heroku, you can use buildpacks instead of binaries to load in pdftk and wkhtmltopdf. Here's an example buildpack file. 
+
+```
+https://github.com/fxtentacle/heroku-pdftk-buildpack.git
+https://github.com/dscout/wkhtmltopdf-buildpack.git
+https://github.com/HashNuke/heroku-buildpack-elixir
+https://github.com/gjaldon/phoenix-static-buildpack
+```
+
+note: this has elixir and phoenix buildpacks in here as well to show that they have to be placed after the wkhtmltopdf and pdftk buildpacks. It won't work if they come after elixir/phoenix buildpacks.
+
 # Documentation
 
 For more info, read the [docs on hex](http://hexdocs.pm/pdf_generator) or issue
