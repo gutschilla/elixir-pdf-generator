@@ -9,12 +9,12 @@ to use wkhtmltopdf on systems that have no X installed, e.g. a server.
   - master
     - improve REAMDE
   - 0.3.5
-    - add `generate_binray` and `generate_binary!` that immediately return the
+    - add `generate_binary` and `generate_binary!` that immediately return the
       PDF binary instead of an `{:ok, filename}` tuple.
     - add `generate!` to immediately return the filename
     - some more tests
     - minor change `delete_temporary` must be truthy. (the old supported value
-      `:html` will stil work) and will delete both intermediate HTML And PDF
+      `:html` will still work) and will delete both intermediate HTML And PDF
       files in `generate_binary` and `generate_binary!`
   - 0.3.4
     - BUGFIX: fix merge confusion to **really** support `xvfb-run` or other
