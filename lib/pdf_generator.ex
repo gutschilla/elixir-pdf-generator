@@ -78,7 +78,7 @@ defmodule PdfGenerator do
   end
 
   # return file name of generated pdf
-  # requires: Porcelain, Misc.Random, zarex
+  # requires: Porcelain, Misc.Random
 
   @doc """
   Generates a pdf file from given html string. Returns a string containing a
@@ -158,7 +158,7 @@ defmodule PdfGenerator do
   end
 
   defp generate_filebase(nil), do: generate_filebase(Misc.Random.string)
-  defp generate_filebase(filename), do: Path.join(System.tmp_dir, Zarex.sanitize(filename))
+  defp generate_filebase(filename), do: Path.join(System.tmp_dir, filename)
 
   def encrypt_pdf( pdf_input_path, user_pw, owner_pw ) do
     pdftk_path = PdfGenerator.PathAgent.get.pdftk_path
