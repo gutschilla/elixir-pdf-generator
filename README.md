@@ -4,25 +4,18 @@ A wrapper for wkhtmltopdf (HTML to PDF) and PDFTK (adds in encryption) for use
 in Elixir projects. If available, it will use xvfb-run (x virtual frame buffer)
 to use wkhtmltopdf on systems that have no X installed, e.g. a server.
 
-# New in 0.3.4 and 0.3.5
+# New in 0.3.6 - Custom filenames and maintenance
 
-  - master
-    - improve REAMDE
-    - add option to pick output pdf filename
-  - 0.3.5
-    - add `generate_binary` and `generate_binary!` that immediately return the
-      PDF binary instead of an `{:ok, filename}` tuple.
-    - add `generate!` to immediately return the filename
-    - some more tests
-    - minor change `delete_temporary` must be truthy. (the old supported value
-      `:html` will still work) and will delete both intermediate HTML And PDF
-      files in `generate_binary` and `generate_binary!`
-  - 0.3.4
-    - BUGFIX: fix merge confusion to **really** support `xvfb-run` or other
-      command prefixes to wkhtmltopdf
-    - support explicit deletion of temporary files thanks to
-      [Edipo Vinicius da Silva](https://github.com/edipox)
-    - Improve README
+  - 0.3.6
+    - bumped dependencies:
+      * porcelain 2.0.3 to support newer erlangs and remove warnings
+      * ex_doc 0.16 to remove warnings, remove from runtime
+      * removed explixit earmark
+    - add option to pick output pdf filename, thanks
+      to [praveenperera](https://github.com/praveenperera)
+    - improved README on heroku, corrected typpos. Thanks
+      to [jbhatab](https://github.com/jbhatab)
+      and [maggy96](https://github.com/maggy96)
 
 For a proper changelog, see [CHANGES](CHANGES.md)
 

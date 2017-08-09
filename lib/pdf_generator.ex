@@ -115,7 +115,7 @@ defmodule PdfGenerator do
 
   def generate( html, options ) do
     wkhtml_path     = PdfGenerator.PathAgent.get.wkhtml_path
-    filebase        = generate_filebase(options[:filename]) 
+    filebase        = generate_filebase(options[:filename])
     html_file       = filebase <> ".html"
     pdf_file        = filebase <> ".pdf"
     File.write html_file, html
@@ -127,15 +127,11 @@ defmodule PdfGenerator do
 
     executable     = wkhtml_path
     arguments      = List.flatten( [ shell_params, html_file, pdf_file ] )
-    command_prefix = Keyword.get( options, :command_prefix ) || Application.get_env( :pdf_generator, :command_prefix )
+    command_prefix = get_command_prefix( options )
 
     # allow for xvfb-run wkhtmltopdf arg1 arg2
     # or sudo wkhtmltopdf ...
-    { executable, arguments } =
-      case command_prefix do
-        nil -> { executable, arguments }
-        cmd -> { cmd, [executable] ++ arguments }
-      end
+    { executable, arguments } = make_command_tuple(command_prefix, executable, arguments)
 
     %Result{ out: _output, status: status, err: error } = Porcelain.exec(
       executable, arguments, [in: "", out: :string, err: :string]
@@ -155,6 +151,17 @@ defmodule PdfGenerator do
         end
       _ -> { :error, error }
     end
+  end
+
+  def get_command_prefix(options) do
+    Keyword.get( options, :command_prefix ) || Application.get_env( :pdf_generator, :command_prefix )
+  end
+
+  def make_command_tuple(_command_prefix = nil, wkhtml_executable, arguments) do
+    { wkhtml_executable, arguments }
+  end
+  def make_command_tuple(command_prefix, wkhtml_executable, arguments) do
+    { command_prefix, [wkhtml_executable] ++ arguments }
   end
 
   defp generate_filebase(nil), do: generate_filebase(Misc.Random.string)
