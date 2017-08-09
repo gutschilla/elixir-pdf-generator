@@ -20,7 +20,7 @@ defmodule PdfGenerator.Mixfile do
   # Type `mix help compile.app` for more information
   def application do
     [
-      applications: [ :logger, :porcelain ],
+      applications: [ :logger, :porcelain, :misc_random ],
       mod: { PdfGenerator, [] }
     ]
   end
