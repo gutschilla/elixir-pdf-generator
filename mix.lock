@@ -1,5 +1,6 @@
-%{"earmark": {:hex, :earmark, "0.1.19"},
-  "ex_doc": {:hex, :ex_doc, "0.11.2"},
-  "misc_random": {:hex, :misc_random, "0.2.6"},
-  "porcelain": {:hex, :porcelain, "2.0.1"},
-  "random": {:git, "https://github.com/gutschilla/elixir-helper-random.git", "fb801765651e8e6fa02866803592eade96b6c4d7", []}}
+%{"earmark": {:hex, :earmark, "0.1.19", "ffec54f520a11b711532c23d8a52b75a74c09697062d10613fa2dbdf8a9db36e", [:mix], []},
+  "ex_doc": {:hex, :ex_doc, "0.11.2", "8ac82c6144a27faca6a623eeebfbf5a791bc20a54ce29a9c02e499536d253d9b", [:mix], [{:earmark, "~> 0.1.17 or ~> 0.2", [hex: :earmark, optional: true]}]},
+  "misc_random": {:hex, :misc_random, "0.2.6", "959981142c96005731ed8b7df2440f5563a31c3a159edd5769fe28c77e3e0af7", [:mix], []},
+  "porcelain": {:hex, :porcelain, "2.0.1", "9c3db2b47d8cf6879c0d9ac79db8657333974a88faff09e856569e00c1b5e119", [:mix], []},
+  "random": {:git, "https://github.com/gutschilla/elixir-helper-random.git", "fb801765651e8e6fa02866803592eade96b6c4d7", []},
+  "zarex": {:hex, :zarex, "0.3.0", "e19145de2127671f3d3f4bdb6bb60a0d70830836a01a79ba63428a5bbe3a16e0", [:mix], []}}
