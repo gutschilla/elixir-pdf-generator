@@ -161,7 +161,12 @@ defmodule PdfGenerator do
     { wkhtml_executable, arguments }
   end
   def make_command_tuple(command_prefix, wkhtml_executable, arguments) do
-    { command_prefix, [wkhtml_executable] ++ arguments }
+    case String.split(command_prefix, " ", parts: 2) do
+      [command_prefix, command_prefix_arguments] ->
+        { command_prefix, [command_prefix_arguments, wkhtml_executable] ++ arguments }
+      [command_prefix] ->
+        { command_prefix, [wkhtml_executable] ++ arguments }
+    end
   end
 
   defp generate_filebase(nil), do: generate_filebase(Misc.Random.string)
