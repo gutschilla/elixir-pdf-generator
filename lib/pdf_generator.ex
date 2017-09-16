@@ -160,6 +160,9 @@ defmodule PdfGenerator do
   def make_command_tuple(_command_prefix = nil, wkhtml_executable, arguments) do
     { wkhtml_executable, arguments }
   end
+  def make_command_tuple([command_prefix | args], wkhtml_executable, arguments) do
+    { command_prefix, args ++ [wkhtml_executable] ++ arguments }
+  end
   def make_command_tuple(command_prefix, wkhtml_executable, arguments) do
     { command_prefix, [wkhtml_executable] ++ arguments }
   end
