@@ -13,7 +13,7 @@ to use wkhtmltopdf on systems that have no X installed, e.g. a server.
       * removed explixit earmark
     - add option to pick output pdf filename, thanks
       to [praveenperera](https://github.com/praveenperera)
-    - improved README on heroku, corrected typpos. Thanks
+    - improved README on heroku, corrected typos. Thanks
       to [jbhatab](https://github.com/jbhatab)
       and [maggy96](https://github.com/maggy96)
 
@@ -35,7 +35,7 @@ me if you ran this successfully on a Mac.
 _(optional)_ For best results, download goon and place it in your $PATH. Current
 binaries can be found here: https://github.com/alco/goon/releases
 
-_(optional)_ Install pdftk (optional) via your package manager or homebrew. The
+_(optional)_ Install pdftk via your package manager or homebrew. The
 project page also contains a Windows installer
 
 # Usage
@@ -64,10 +64,10 @@ $ iex -S mix
 html = "<html><body><p>Hi there!</p></body></html>"
 # be aware, this may take a while...
 { :ok, filename }    = PdfGenerator.generate html, page_size: "A5"
-{ :ok, pdf_content } = File.read file_name 
+{ :ok, pdf_content } = File.read filename 
 
-# or, if you prefail methods that rais on error:
-filename             = PdfGenerator.generate! html
+# or, if you prefer methods that raise on error:
+filename            = PdfGenerator.generate! html
 ```
 
 Or use the bang-methods:
@@ -91,15 +91,15 @@ config :pdf_generator,
 
 ## Running headless (server-mode)
 
-If you happen to want to run an wkhtmltopdf with an unpatched version of webkit
-that requires an X Window server - but on your server (or Mac) ain't one, you
-might find a `command_prefix` handy:
+If you want to run `wkhtmltopdf` with an unpatched verison of webkit that requires
+an X Window server, but your server (or Mac) does not have one installed,
+you may find the `command_prefix` handy:
 
 ```
 PdfGenerator.generate "<html..", command_prefix: "xvfb-run" 
 ```
 
-This can also be configured globally in cour `config/config.exs`:
+This can also be configured globally in your `config/config.exs`:
 
 ```
 config :pdf_generator,
@@ -107,28 +107,29 @@ config :pdf_generator,
 ```
 
 ## More options
- 
-- `page_size`:        defaults to `A4`, see wkhtmltopdf for more options 
-- `open_password`:    requires `pdftk`, password to encrypt PDFs with
-- `edit_password`:    requires `pdftk`, sets password for edit permissions on PDF
-- `shell_params`:     pass custom parameters to wkhtmltopdf. **CAUTION: BEWARE OF SHELL INJECTIONS!** 
-- `command_prefix`:   prefix wkhtmltopdf with some command (e.g. `xvfb-run`, `sudo` ..)
+
+- `page_size`:        defaults to `A4`, see `wkhtmltopdf` for more options 
+- `open_password`:    requires `pdftk`, set password to encrypt PDFs with
+- `edit_password`:    requires `pdftk`, set password for edit permissions on PDF
+- `shell_params`:     pass custom parameters to `wkhtmltopdf`. **CAUTION: BEWARE OF SHELL INJECTIONS!** 
+- `command_prefix`:   prefix `wkhtmltopdf` with some command (e.g. `xvfb-run`, `sudo` ..)
 - `delete_temporary`: immediately remove temp files after generation
-- `filename` - filename you want for the output PDF (provide without .pdf extension),
-     defaults to a random string
+- `filename` - filename for the output pdf file (without .pdf extension, defaults to a random string)
 
 ## Heroku Setup
 
-If you are using this with heroku, you can use buildpacks instead of binaries to load in pdftk and wkhtmltopdf. Here's an example buildpack file. 
-
+If you want to use this project on heroku, you can use buildpacks instead of binaries
+to load `pdftk` and `wkhtmltopdf`:
 ```
-https://github.com/fxtentacle/heroku-pdftk-buildpack.git
-https://github.com/dscout/wkhtmltopdf-buildpack.git
+https://github.com/fxtentacle/heroku-pdftk-buildpack
+https://github.com/dscout/wkhtmltopdf-buildpack
 https://github.com/HashNuke/heroku-buildpack-elixir
 https://github.com/gjaldon/phoenix-static-buildpack
 ```
 
-note: this has elixir and phoenix buildpacks in here as well to show that they have to be placed after the wkhtmltopdf and pdftk buildpacks. It won't work if they come after elixir/phoenix buildpacks.
+__note:__ The list also includes Elixir and Phoenix buildpacks to show you that they
+must be placed after `pdftk` and `wkhtmltopdf`. It won't work if you load the 
+Elixir and Phoenix buildpacks first.
 
 # Documentation
 
