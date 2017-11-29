@@ -146,7 +146,7 @@ For more info, read the [docs on hex](http://hexdocs.pm/pdf_generator) or issue
 
 **FIX**
 
-For now, unfortunately, it's required to add `misc_ramdom` to either your
+For now, unfortunately, it's required to add `misc_random` to either your
 `included_applications` section in your `mix.exs` (exrm) or for (distillery) add
 it to your release/applications list in `rel/config.exs`.
 
