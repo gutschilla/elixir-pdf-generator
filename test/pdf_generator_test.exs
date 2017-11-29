@@ -23,6 +23,10 @@ defmodule PdfGeneratorTest do
     {:ok, _temp_filename } = PdfGenerator.generate @html, command_prefix: "env"
   end
 
+  test "command prefix with args with noop env" do
+    {:ok, _temp_filename } = PdfGenerator.generate @html, command_prefix: ["env", "foo=bar"]
+  end
+
   test "generate_binary reads file" do
     assert {:ok, "%PDF-1" <> _pdf} = @html |> PdfGenerator.generate_binary
   end
