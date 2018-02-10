@@ -1,5 +1,5 @@
 defmodule PdfGenerator.PathAgent do
-
+  require Logger
   defstruct wkhtml_path: nil, pdftk_path: nil
 
   @moduledoc """
@@ -17,20 +17,16 @@ defmodule PdfGenerator.PathAgent do
     # options override system default paths
     options =
       [
-        wkhtml_path:    System.find_executable( "wkhtmltopdf" ),
+        wkhtml_path:    System.find_executable( "wkhtsmltopdf" ),
         pdftk_path:     System.find_executable( "pdftk" )
       ]
       ++ paths_from_options
+      |> Enum.dedup()
       |> Enum.filter( fn { _, v } -> v != nil end )
+      |> IO.inspect
+      |> raise_or_continue()
 
-    # at least, wkhtmltopdf executable sould be there
-    if Keyword.fetch!( options, :wkhtml_path ) == nil do
-      raise "path to wkhtmltopdf is neither found on path nor given as wkhtml_path option. Can't continue."
-    end
-
-    # IO.inspect options
     Map.merge %PdfGenerator.PathAgent{}, Enum.into( options, %{} )
-
   end
 
   @doc "Stops agent, returns :ok"
@@ -43,4 +39,16 @@ defmodule PdfGenerator.PathAgent do
     Agent.get( @name, fn( data ) -> data end )
   end
 
+  def raise_or_continue(options) do
+    exe_exists       = File.exists?(Keyword.get(options, :wkhtml_path, ""))
+    raise_on_missing = Keyword.get(options, :raise_on_missing_wkhtmltopdf_binary, true)
+
+    case {exe_exists, raise_on_missing} do
+      {true, _} -> options
+      {false, true} -> raise "wkhtmltopdf executable was not found on your system"
+      {false, false} -> 
+        Logger.warn "wkhtmltopdf executable was not found on your system"
+        options
+    end
+  end
 end
