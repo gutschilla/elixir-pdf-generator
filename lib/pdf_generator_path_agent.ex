@@ -17,7 +17,7 @@ defmodule PdfGenerator.PathAgent do
     # options override system default paths
     options =
       [
-        wkhtml_path:    System.find_executable( "wkhtsmltopdf" ),
+        wkhtml_path:    System.find_executable( "wkhtmltopdf" ),
         pdftk_path:     System.find_executable( "pdftk" )
       ]
       ++ paths_from_options
