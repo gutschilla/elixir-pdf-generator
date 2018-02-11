@@ -23,7 +23,6 @@ defmodule PdfGenerator.PathAgent do
       ++ paths_from_options
       |> Enum.dedup()
       |> Enum.filter( fn { _, v } -> v != nil end )
-      |> IO.inspect
       |> raise_or_continue()
 
     Map.merge %PdfGenerator.PathAgent{}, Enum.into( options, %{} )
