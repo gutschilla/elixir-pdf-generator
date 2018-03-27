@@ -1,4 +1,9 @@
 # Changes
+  - 0.3.7
+    - Adding in raise_on_missing_wkhtmltopdf_binary config, thanks
+      to [veverkap](https://github.com/veverkap)
+    - Document using xvfb-run with auto-servernum option, thanks
+      to [Tony van Riet](https://github.com/tonyvanriet)
   - 0.3.6
     - bumped dependencies:
       * porcelain 2.0.3 to support newer erlangs and remove warnings

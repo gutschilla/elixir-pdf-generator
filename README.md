@@ -4,18 +4,13 @@ A wrapper for wkhtmltopdf (HTML to PDF) and PDFTK (adds in encryption) for use
 in Elixir projects. If available, it will use xvfb-run (x virtual frame buffer)
 to use wkhtmltopdf on systems that have no X installed, e.g. a server.
 
-# New in 0.3.6 - Custom filenames and maintenance
+# New in 0.3.7 - raise_on_missing_wkhtmltopdf_binary
 
-  - 0.3.6
-    - bumped dependencies:
-      * porcelain 2.0.3 to support newer erlangs and remove warnings
-      * ex_doc 0.16 to remove warnings, remove from runtime
-      * removed explixit earmark
-    - add option to pick output pdf filename, thanks
-      to [praveenperera](https://github.com/praveenperera)
-    - improved README on heroku, corrected typos. Thanks
-      to [jbhatab](https://github.com/jbhatab)
-      and [maggy96](https://github.com/maggy96)
+  - 0.3.7
+    - Adding in raise_on_missing_wkhtmltopdf_binary config, thanks
+      to [veverkap](https://github.com/veverkap)
+    - Document using xvfb-run with auto-servernum option, thanks
+      to [Tony van Riet](https://github.com/tonyvanriet)
 
 For a proper changelog, see [CHANGES](CHANGES.md)
 
@@ -28,7 +23,7 @@ _(optional)_ To use wkhtmltopdf on systems without an X window server installed,
 please install `xvfb-run` from your repository (on Debian/Ubuntu: `sudo apt-get
 install xvfb`).
 
-On current (2016) Macintosh computers `/usr/X11/bin/xvfb` should be available
+On current (2018) Macintosh computers `/usr/X11/bin/xvfb` should be available
 and is reported to do the same thing. _warning:_ This is untested. PLS report to
 me if you ran this successfully on a Mac.
 
@@ -52,7 +47,7 @@ Add this to your dependencies in your mix.exs:
     defp deps do
         [
             # ... whatever else
-            { :pdf_generator, ">=0.3.6" }, # <-- and this
+            { :pdf_generator, ">=0.3.7" }, # <-- and this
         ]
     end
 
