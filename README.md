@@ -52,7 +52,7 @@ Add this to your dependencies in your mix.exs:
     defp deps do
         [
             # ... whatever else
-            { :pdf_generator, ">=0.3.5" }, # <-- and this
+            { :pdf_generator, ">=0.3.6" }, # <-- and this
         ]
     end
 
