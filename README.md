@@ -106,13 +106,24 @@ config :pdf_generator,
     command_prefix: "/usr/bin/xvfb-run"
 ```
 
+If you will be generating multiple PDFs simultaneously, or in rapid succession,
+you will need to configure `xvfb-run` to search for a free X server number,
+or set the server number explicitly. You can use the `command_prefix` to pass
+options to the `xvfb-run` command.
+
+```
+config :pdf_generator,
+    command_prefix: ["xvfb-run", "-a"]
+```
+
 ## More options
 
 - `page_size`:        defaults to `A4`, see `wkhtmltopdf` for more options 
 - `open_password`:    requires `pdftk`, set password to encrypt PDFs with
 - `edit_password`:    requires `pdftk`, set password for edit permissions on PDF
 - `shell_params`:     pass custom parameters to `wkhtmltopdf`. **CAUTION: BEWARE OF SHELL INJECTIONS!** 
-- `command_prefix`:   prefix `wkhtmltopdf` with some command (e.g. `xvfb-run`, `sudo` ..)
+- `command_prefix`:   prefix `wkhtmltopdf` with some command or a command with options
+                      (e.g. `xvfb-run -a`, `sudo` ..)
 - `delete_temporary`: immediately remove temp files after generation
 - `filename` - filename for the output pdf file (without .pdf extension, defaults to a random string)
 
