@@ -1,6 +1,6 @@
 defmodule PdfGenerator do
 
-  @vsn "0.3.5"
+  @vsn "0.3.6"
 
   @moduledoc """
   # PdfGenerator
@@ -67,8 +67,9 @@ defmodule PdfGenerator do
         # worker(TestApp.Worker, [arg1, arg2, arg3])
         worker(
           PdfGenerator.PathAgent, [[
-            wkhtml_path:    Application.get_env(:pdf_generator, :wkhtml_path),
-            pdftk_path:     Application.get_env(:pdf_generator, :pdftk_path),
+            wkhtml_path:                         Application.get_env(:pdf_generator, :wkhtml_path),
+            pdftk_path:                          Application.get_env(:pdf_generator, :pdftk_path),
+            raise_on_missing_wkhtmltopdf_binary: Application.get_env(:pdf_generator, :raise_on_missing_wkhtmltopdf_binary, true),
           ]]
         )
       ]
