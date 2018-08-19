@@ -141,25 +141,3 @@ Elixir and Phoenix buildpacks first.
 
 For more info, read the [docs on hex](http://hexdocs.pm/pdf_generator) or issue
 `h PdfGenerator` in your iex shell.
-
-# Common issues
-
-## Running from within distillery or exrm releases
-
-**ERROR** 
-
-`(UndefinedFunctionError) function Misc.Random.string/0 is undefined (module Misc.Random is not available)`
-
-**FIX**
-
-For now, unfortunately, it's required to add `misc_random` to either your
-`included_applications` section in your `mix.exs` (exrm) or for (distillery) add
-it to your release/applications list in `rel/config.exs`.
-
-```
-...
-release :your_app do
-  set version: current_version(:your_app)
-  set applications: [:misc_random]
-end
-```
