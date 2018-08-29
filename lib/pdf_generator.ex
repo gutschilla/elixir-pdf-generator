@@ -79,7 +79,6 @@ defmodule PdfGenerator do
   end
 
   # return file name of generated pdf
-  # requires: Porcelain, Misc.Random
 
   @doc """
   Generates a pdf file from given html string. Returns a string containing a
@@ -168,12 +167,12 @@ defmodule PdfGenerator do
     { command_prefix, [wkhtml_executable] ++ arguments }
   end
 
-  defp generate_filebase(nil), do: generate_filebase(Misc.Random.string)
+  defp generate_filebase(nil), do: generate_filebase(PdfGenerator.Random.string())
   defp generate_filebase(filename), do: Path.join(System.tmp_dir, filename)
 
   def encrypt_pdf( pdf_input_path, user_pw, owner_pw ) do
     pdftk_path = PdfGenerator.PathAgent.get.pdftk_path
-    pdf_output_file  = Path.join System.tmp_dir, Misc.Random.string <> ".pdf"
+    pdf_output_file  = Path.join System.tmp_dir, PdfGenerator.Random.string() <> ".pdf"
 
     %Result{ out: _output, status: status } = Porcelain.exec(
       pdftk_path, [
@@ -192,7 +191,7 @@ defmodule PdfGenerator do
     end
   end
 
-  defp random_if_undef(nil), do: Misc.Random.string(16)
+  defp random_if_undef(nil), do: PdfGenerator.Random.string(16)
   defp random_if_undef(any), do: any
 
   @doc """

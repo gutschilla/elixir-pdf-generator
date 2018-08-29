@@ -1,6 +1,5 @@
-%{"earmark": {:hex, :earmark, "1.2.3", "206eb2e2ac1a794aa5256f3982de7a76bf4579ff91cb28d0e17ea2c9491e46a4", [:mix], []},
+%{
+  "earmark": {:hex, :earmark, "1.2.3", "206eb2e2ac1a794aa5256f3982de7a76bf4579ff91cb28d0e17ea2c9491e46a4", [:mix], []},
   "ex_doc": {:hex, :ex_doc, "0.16.2", "3b3e210ebcd85a7c76b4e73f85c5640c011d2a0b2f06dcdf5acdb2ae904e5084", [:mix], [{:earmark, "~> 1.1", [hex: :earmark, optional: false]}]},
-  "misc_random": {:hex, :misc_random, "0.2.6", "959981142c96005731ed8b7df2440f5563a31c3a159edd5769fe28c77e3e0af7", [:mix], []},
   "porcelain": {:hex, :porcelain, "2.0.3", "2d77b17d1f21fed875b8c5ecba72a01533db2013bd2e5e62c6d286c029150fdc", [:mix], []},
-  "random": {:git, "https://github.com/gutschilla/elixir-helper-random.git", "fb801765651e8e6fa02866803592eade96b6c4d7", []},
-  "zarex": {:hex, :zarex, "0.3.0", "e19145de2127671f3d3f4bdb6bb60a0d70830836a01a79ba63428a5bbe3a16e0", [:mix], []}}
+}
