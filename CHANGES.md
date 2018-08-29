@@ -1,4 +1,16 @@
 # Changes
+  - 0.4.0
+    - Got rid of misc_random dependency. This was here to manage between
+      depreciated random functions in Erlang. We go ahead using plain
+      `Enum.random/1` instead, implementing our own
+      `PdfGenerator.Random.string/1` function. This also removes a common
+      pitfall when drafting a release with distillery.
+      * Thanks to [Hugo Maia Vieira](https://github.com/hugomaiavieira) for this
+        contribution!
+      * Since `Enum.random/1` is only available since September 2015 (three
+        years ago) I am OK with raising the minimum Elixir version to v1.1 –
+        Since this may break projects still running on Elixir v1.0
+        **I bumped the version to 0.4.0***.
   - 0.3.7
     - Adding in raise_on_missing_wkhtmltopdf_binary config, thanks
       to [veverkap](https://github.com/veverkap)

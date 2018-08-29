@@ -4,13 +4,20 @@ A wrapper for wkhtmltopdf (HTML to PDF) and PDFTK (adds in encryption) for use
 in Elixir projects. If available, it will use xvfb-run (x virtual frame buffer)
 to use wkhtmltopdf on systems that have no X installed, e.g. a server.
 
-# New in 0.3.7 - raise_on_missing_wkhtmltopdf_binary
+# New in 0.4.0 - remove misc_random, require Elixir v1.1
 
-  - 0.3.7
-    - Adding in raise_on_missing_wkhtmltopdf_binary config, thanks
-      to [veverkap](https://github.com/veverkap)
-    - Document using xvfb-run with auto-servernum option, thanks
-      to [Tony van Riet](https://github.com/tonyvanriet)
+  - 0.4.0
+    - Got rid of misc_random dependency. This was here to manage between
+      depreciated random functions in Erlang. We go ahead using plain
+      `Enum.random/1` instead, implementing our own
+      `PdfGenerator.Random.string/1` function. This also removes a common
+      pitfall when drafting a release with distillery.
+      * Thanks to [Hugo Maia Vieira](https://github.com/hugomaiavieira) for this
+        contribution!
+      * Since `Enum.random/1` is only available since September 2015 (three
+        years ago) I am OK with raising the minimum Elixir version to v1.1 –
+        Since this may break projects still running on Elixir v1.0
+        **I bumped the version to 0.4.0***.
 
 For a proper changelog, see [CHANGES](CHANGES.md)
 
@@ -47,7 +54,7 @@ Add this to your dependencies in your mix.exs:
     defp deps do
         [
             # ... whatever else
-            { :pdf_generator, ">=0.3.7" }, # <-- and this
+            { :pdf_generator, ">=0.4.0" }, # <-- and this
         ]
     end
 
