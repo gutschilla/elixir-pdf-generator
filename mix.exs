@@ -48,7 +48,8 @@ defmodule PdfGenerator.Mixfile do
         # communication with external programs
         {:porcelain, "~> 2.0"},
         # generate docs
-        {:ex_doc, "~> 0.16", only: :dev, runtime: false}
+        {:ex_doc, "~> 0.16", only: :dev, runtime: false},
+        {:fake_server, "~> 1.5", only: :test}
     ]
   end
 end
