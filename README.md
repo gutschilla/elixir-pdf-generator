@@ -4,27 +4,31 @@ A wrapper for wkhtmltopdf (HTML to PDF) and PDFTK (adds in encryption) for use
 in Elixir projects. If available, it will use xvfb-run (x virtual frame buffer)
 to use wkhtmltopdf on systems that have no X installed, e.g. a server.
 
-# New in 0.4.0 - remove misc_random, require Elixir v1.1
+# New in 0.5.0 - farewell Porcelain, hello chrome-headless
 
-  - 0.4.0
-    - Got rid of misc_random dependency. This was here to manage between
-      depreciated random functions in Erlang. We go ahead using plain
-      `Enum.random/1` instead, implementing our own
-      `PdfGenerator.Random.string/1` function. This also removes a common
-      pitfall when drafting a release with distillery.
-      * Thanks to [Hugo Maia Vieira](https://github.com/hugomaiavieira) for this
-        contribution!
-      * Since `Enum.random/1` is only available since September 2015 (three
-        years ago) I am OK with raising the minimum Elixir version to v1.1 –
-        Since this may break projects still running on Elixir v1.0
-        **I bumped the version to 0.4.0***.
+  - 0.5.0
+    - **Got rid of Porcelain** dependency as it interferes with many builds using
+      plain `System.cmd/3`. Please note, that as of the documentation
+      (https://hexdocs.pm/elixir/System.html#cmd/3) ports will be closed but in
+      case wkhtmltopdf somehow hangs, nobody takes care of terminating it.
+    - Refactored some sections
+    - **Support URLs** instead of just plain HTML
+    - **Support for chrome-headless** for (at least for me) faster and nicer renderings.
+    - Since this is hopefully helpful, I rose the version to 0.5.0 even tough
+      the API stays consistent
 
 For a proper changelog, see [CHANGES](CHANGES.md)
 
-# System prerequisites
+# System prerequisites (either wkhtmltopdf or nodejs)
 
 Download wkhtmltopdf and place it in your $PATH. Current binaries can be found
 here: http://wkhtmltopdf.org/downloads.html
+
+**OR***
+
+Run `npm install`. This requires [nodejs](https://nodejs.org), of course. This
+will install a recent chromium and chromedriver to run Chrome in headless mode
+and use this browser and its API to print PDFs.
 
 _(optional)_ To use wkhtmltopdf on systems without an X window server installed,
 please install `xvfb-run` from your repository (on Debian/Ubuntu: `sudo apt-get
@@ -54,7 +58,7 @@ Add this to your dependencies in your mix.exs:
     defp deps do
         [
             # ... whatever else
-            { :pdf_generator, ">=0.4.0" }, # <-- and this
+            { :pdf_generator, ">=0.5.0" }, # <-- and this
         ]
     end
 
@@ -70,6 +74,22 @@ html = "<html><body><p>Hi there!</p></body></html>"
 
 # or, if you prefer methods that raise on error:
 filename            = PdfGenerator.generate! html
+```
+
+Or, pass some URL
+
+```
+url = "http://google.com"
+{ :ok, filename }    = PdfGenerator.generate {:url, url}, page_size: "A5"
+...
+```
+
+Or, use chrome-headless
+
+```
+url = "http://google.com"
+{ :ok, filename }    = PdfGenerator.generate {:url, url}, page_size: "A5", renderer: :chrome
+...
 ```
 
 Or use the bang-methods:
@@ -90,8 +110,18 @@ config :pdf_generator,
     wkhtml_path:    "/usr/bin/wkhtmltopdf",   # <-- this program actually does the heavy lifting
     pdftk_path:     "/usr/bin/pdftk"          # <-- only needed for PDF encryption
 ```
+ 
+or, if you prefer shrome-headless
 
-## Running headless (server-mode)
+```
+config :pdf_generator,
+    use_chrome: true             # <-- will be default by 0.6.0 
+    pdftk_path: "/usr/bin/pdftk" # <-- only needed for PDF encryption
+```
+
+## Running wkhtml headless (server-mode)
+
+This section only applies to `wkhtmltopdf` users.
 
 If you want to run `wkhtmltopdf` with an unpatched verison of webkit that requires
 an X Window server, but your server (or Mac) does not have one installed,
@@ -120,14 +150,23 @@ config :pdf_generator,
 
 ## More options
 
-- `page_size`:        defaults to `A4`, see `wkhtmltopdf` for more options 
+- `filename` - filename for the output pdf file (without .pdf extension, defaults to a random string)
+
+- `page_size`:        
+  * defaults to `A4`, see `wkhtmltopdf` for more options 
+  * A4 will be translated to `page-height 11` and `page-width 8.5` when
+    chrome-headless is used
+
 - `open_password`:    requires `pdftk`, set password to encrypt PDFs with
+
 - `edit_password`:    requires `pdftk`, set password for edit permissions on PDF
+
 - `shell_params`:     pass custom parameters to `wkhtmltopdf`. **CAUTION: BEWARE OF SHELL INJECTIONS!** 
+
 - `command_prefix`:   prefix `wkhtmltopdf` with some command or a command with options
                       (e.g. `xvfb-run -a`, `sudo` ..)
+                      
 - `delete_temporary`: immediately remove temp files after generation
-- `filename` - filename for the output pdf file (without .pdf extension, defaults to a random string)
 
 ## Heroku Setup
 

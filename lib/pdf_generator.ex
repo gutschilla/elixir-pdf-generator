@@ -35,9 +35,8 @@ defmodule PdfGenerator do
 
   # System requirements
 
-  - wkhtmltopdf
+  - wkhtmltopdf or chrome-headless
   - pdftk (optional, for encrypted PDFs)
-  - goon (optional, for Porcelain shalle wrapper)
 
   Precompiled **wkhtmltopdf** binaries can be obtained here:
   http://wkhtmltopdf.org/downloads.html
@@ -74,6 +73,8 @@ defmodule PdfGenerator do
       Supervisor.start_link(children, opts)
   end
 
+  def defaults(), do: [generator: :wkhtmltopdf, page_size: "A4"]
+
   # return file name of generated pdf
 
   @doc """
@@ -105,45 +106,105 @@ defmodule PdfGenerator do
     filename: "my_awesome_pdf"
   )
   """
-  def generate( html ) do
-    generate html, page_size: "A4"
-  end
 
-  def generate( html, options ) do
-    generate(:wkhtmltopdf, html, options )
-  end
+  @type url           :: binary()
+  @type html          :: binary()
+  @type pdf_file_path :: binary()
+  @type content       :: html | {:ok, url}
+  @type reason        :: atom() | {atom(), any}
+  @type opts          :: keyword()
+  @type path          :: binary()
+  @type html_path     :: path
+  @type pdf_path      :: path
+  @type generator     :: :wkhtmltopdf | :chrome
 
-  def generate(:wkhtmltopdf, html, options ) do
-    wkhtml_path     = PdfGenerator.PathAgent.get.wkhtml_path
-    filebase        = generate_filebase(options[:filename])
-    html_file       = filebase <> ".html"
-    pdf_file        = filebase <> ".pdf"
-    File.write html_file, html
+  @spec generate(content, opts) :: {:ok, pdf_file_path} | {:error, reason}
+  def generate(content, opts \\ []) do
 
-    shell_params = [
-      "--page-size", Keyword.get( options, :page_size ) || "A4",
-      Keyword.get( options, :shell_params ) || [] # will be flattened
-    ]
+    options = Keyword.merge(defaults(), opts)
 
-    executable     = wkhtml_path
-    arguments      = List.flatten([shell_params, html_file, pdf_file])
-    command_prefix = get_command_prefix(options)
+    generator     = options[:generator]
 
-    open_password = Keyword.get options, :open_password
-    edit_password = Keyword.get(options, :edit_password)
-    delete_temp   = Keyword.get(options, :delete_temporary)
+    open_password = options[:open_password]
+    edit_password = options[:edit_password]
+    delete_temp   = options[:delete_temporary]
 
-    with {executable, arguments}    <- make_command_tuple(command_prefix, executable, arguments),
-         {console_stderr, _code}    <- System.cmd(executable, arguments, stderr_to_stdout: true), # unfortuantely wkhtmltopdf returns 0 on errors as well :-/
-         {:stderr_good, {true, _x}} <- {:stderr_good, result_ok(:wkhtmltopdf, console_stderr)}, # so we inspect stderr instead
-         {:rm, :ok}                 <- {:rm, maybe_delete_temp(delete_temp, html_file)},
-         {:ok, pdf}                 <- maybe_encrypt_pdf(pdf_file, open_password, edit_password) do
-      {:ok, pdf}
+    with {html_file, pdf_file}       <- make_file_paths(options),
+         :ok                         <- maybe_write_html(content, html_file),
+         {executable, arguments}     <- make_command(generator, options, content, {html_file, pdf_file}),
+         {console_stderr, exit_code} <- System.cmd(executable, arguments, stderr_to_stdout: true),       # unfortuantely wkhtmltopdf returns 0 on errors as well :-/
+         {:result_ok, true}          <- {:result_ok, result_ok(generator, console_stderr, exit_code)},   # so we inspect stderr instead
+         {:rm, :ok}                  <- {:rm, maybe_delete_temp(delete_temp, html_file)},
+         {:ok, encrypted_pdf}        <- maybe_encrypt_pdf(pdf_file, open_password, edit_password) do
+      {:ok, encrypted_pdf}
     else
       {:error, reason} -> {:error, reason}
       reason           -> {:error, reason}
     end
+  end
 
+  @spec maybe_write_html(content, path()) :: :ok | {:error, reason}
+  def maybe_write_html({:url, _url}, _html_file_path),                      do: :ok
+  def maybe_write_html({:html, html}, html_file_path),                      do: File.write(html_file_path, html)
+  def maybe_write_html(html,          html_file_path) when is_binary(html), do: maybe_write_html({:html, html}, html_file_path)
+
+  @spec make_file_paths(keyword()) :: {html_path, pdf_path}
+  def make_file_paths(options) do
+    filebase = options[:filename] |> generate_filebase()
+    {filebase <> ".html", filebase <> ".pdf"}
+  end
+
+  def make_dimensions(options) when is_list(options) do
+    options |> Enum.into(%{}) |> dimensions_for()
+  end
+
+  @doc ~s"""
+  Returns `{width, height}` tuple for page sizes either as given or for A4 and
+  A5. Defaults to A4 sizes.
+  """
+  def dimensions_for(%{page_width: width, page_height: height}), do: {width, height}
+  def dimensions_for(%{page_size: "A4"}),                        do: {"8.50", "11.0"}
+  def dimensions_for(%{page_size: "A5"}),                        do: {"4.25",  "5.5"}
+  def dimensions_for(_map),                                      do: dimensions_for(%{page_size: "A4"})
+
+  @spec make_command(generator, opts, content, {html_path, pdf_path}) :: {path, list()}
+  def make_command(:chrome, options, content, {html_path, pdf_path}) do
+    executable = System.find_executable("chrome-headless-render-pdf")
+    {width, height} = make_dimensions(options)
+    more_params = options[:shell_params] || []
+    source =
+      case content do
+        {:url,  url} -> url
+        _html        -> "file://" <> html_path
+      end
+    arguments = [
+      "--url", source,
+      "--pdf", pdf_path,
+      "--paper-width",   width,
+      "--paper-height", height,
+    ] ++ more_params
+    {executable, arguments}
+  end
+
+  def make_command(:wkhtmltopdf, options, content, {html_path, pdf_path}) do
+    executable  = PdfGenerator.PathAgent.get.wkhtml_path
+    source =
+      case content do
+        {:url, url} -> url
+        _html       -> html_path
+      end
+    more_params = options[:shell_params] || []
+    arguments = [
+      "--page-size", options[:page_size] || "A4",
+      source, pdf_path
+    ] ++ more_params
+
+    # for wkhtmltopdf we support prefixes like ["xvfb-run", "-a"] to precede the actual command
+    case get_command_prefix(options) do
+      nil                    -> {executable, arguments}
+      [prefix | prefix_args] -> {prefix, prefix_args ++ [executable] ++ arguments}
+      prefix                 -> {prefix, [executable | arguments]}
+    end
   end
 
   defp maybe_delete_temp(true,    file), do: File.rm(file)
@@ -158,30 +219,20 @@ defmodule PdfGenerator do
     {:ok, pdf_file}
   end
 
-  def result_ok(:wkhtmltopdf, string) do
-    {String.match?(string, ~r/Done/ms), string}
-  end
+  defp result_ok(:chrome,     _string,          0), do: true
+  defp result_ok(:chrome,     _string, _exit_code), do: false
+  defp result_ok(:wkhtmltopdf, string, _exit_code), do: String.match?(string, ~r/Done/ms)
 
-  def get_command_prefix(options) do
-    Keyword.get( options, :command_prefix ) || Application.get_env( :pdf_generator, :command_prefix )
-  end
-
-  def make_command_tuple(_command_prefix = nil, wkhtml_executable, arguments) do
-    { wkhtml_executable, arguments }
-  end
-  def make_command_tuple([command_prefix | args], wkhtml_executable, arguments) do
-    { command_prefix, args ++ [wkhtml_executable] ++ arguments }
-  end
-  def make_command_tuple(command_prefix, wkhtml_executable, arguments) do
-    { command_prefix, [wkhtml_executable] ++ arguments }
+  defp get_command_prefix(options) do
+    options[:command_prefix] || Application.get_env(:pdf_generator, :command_prefix)
   end
 
   defp generate_filebase(nil), do: generate_filebase(PdfGenerator.Random.string())
   defp generate_filebase(filename), do: Path.join(System.tmp_dir, filename)
 
-  def encrypt_pdf( pdf_input_path, user_pw, owner_pw ) do
-    pdftk_path = PdfGenerator.PathAgent.get.pdftk_path
-    pdf_output_file  = Path.join System.tmp_dir, PdfGenerator.Random.string() <> ".pdf"
+  def encrypt_pdf(pdf_input_path, user_pw, owner_pw ) do
+    pdftk_path      = PdfGenerator.PathAgent.get.pdftk_path
+    pdf_output_file = Path.join System.tmp_dir, PdfGenerator.Random.string() <> ".pdf"
 
     pdftk_args = [
       pdf_input_path,
