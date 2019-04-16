@@ -1,6 +1,6 @@
 defmodule PdfGenerator do
 
-  @vsn "0.3.6"
+  @vsn "0.5.0"
 
   @moduledoc """
   # PdfGenerator
@@ -49,13 +49,9 @@ defmodule PdfGenerator do
    - Install the Exe-Installer on Windows found the project's homepage (link
    above)
 
-  **goon** is available here:
-  https://github.com/alco/goon/releases
-
   """
 
   use Application
-  alias Porcelain.Result
 
   # See http://elixir-lang.org/docs/stable/elixir/Application.html
   # for more information on OTP Applications
@@ -114,6 +110,10 @@ defmodule PdfGenerator do
   end
 
   def generate( html, options ) do
+    generate(:wkhtmltopdf, html, options )
+  end
+
+  def generate(:wkhtmltopdf, html, options ) do
     wkhtml_path     = PdfGenerator.PathAgent.get.wkhtml_path
     filebase        = generate_filebase(options[:filename])
     html_file       = filebase <> ".html"
@@ -126,31 +126,40 @@ defmodule PdfGenerator do
     ]
 
     executable     = wkhtml_path
-    arguments      = List.flatten( [ shell_params, html_file, pdf_file ] )
-    command_prefix = get_command_prefix( options )
+    arguments      = List.flatten([shell_params, html_file, pdf_file])
+    command_prefix = get_command_prefix(options)
 
-    # allow for xvfb-run wkhtmltopdf arg1 arg2
-    # or sudo wkhtmltopdf ...
-    { executable, arguments } = make_command_tuple(command_prefix, executable, arguments)
+    open_password = Keyword.get options, :open_password
+    edit_password = Keyword.get(options, :edit_password)
+    delete_temp   = Keyword.get(options, :delete_temporary)
 
-    %Result{ out: _output, status: status, err: error } = Porcelain.exec(
-      executable, arguments, [in: "", out: :string, err: :string]
-    )
-
-    if Keyword.get(options, :delete_temporary), do: html_file |> File.rm
-
-    case status do
-      0 ->
-        case Keyword.get options, :open_password do
-          nil     -> { :ok, pdf_file }
-          user_pw -> encrypt_pdf(
-            pdf_file,
-            user_pw,
-            Keyword.get( options, :edit_password )
-          )
-        end
-      _ -> { :error, error }
+    with {executable, arguments}    <- make_command_tuple(command_prefix, executable, arguments),
+         {console_stderr, _code}    <- System.cmd(executable, arguments, stderr_to_stdout: true), # unfortuantely wkhtmltopdf returns 0 on errors as well :-/
+         {:stderr_good, {true, _x}} <- {:stderr_good, result_ok(:wkhtmltopdf, console_stderr)}, # so we inspect stderr instead
+         {:rm, :ok}                 <- {:rm, maybe_delete_temp(delete_temp, html_file)},
+         {:ok, pdf}                 <- maybe_encrypt_pdf(pdf_file, open_password, edit_password) do
+      {:ok, pdf}
+    else
+      {:error, reason} -> {:error, reason}
+      reason           -> {:error, reason}
     end
+
+  end
+
+  defp maybe_delete_temp(true,    file), do: File.rm(file)
+  defp maybe_delete_temp(_falsy, _file), do: :ok
+
+  def maybe_encrypt_pdf(pdf_file, open_password, edit_password)
+  when is_binary(open_password) or is_binary(edit_password) do
+    encrypt_pdf(pdf_file, open_password, edit_password)
+  end
+
+  def maybe_encrypt_pdf(pdf_file, _open_password, _edit_password) do
+    {:ok, pdf_file}
+  end
+
+  def result_ok(:wkhtmltopdf, string) do
+    {String.match?(string, ~r/Done/ms), string}
   end
 
   def get_command_prefix(options) do
@@ -174,20 +183,19 @@ defmodule PdfGenerator do
     pdftk_path = PdfGenerator.PathAgent.get.pdftk_path
     pdf_output_file  = Path.join System.tmp_dir, PdfGenerator.Random.string() <> ".pdf"
 
-    %Result{ out: _output, status: status } = Porcelain.exec(
-      pdftk_path, [
-        pdf_input_path,
-        "output", pdf_output_file,
-        "owner_pw", owner_pw |> random_if_undef,
-        "user_pw",  user_pw  |> random_if_undef,
-        "encrypt_128bit",
-        "allow", "Printing", "CopyContents"
-      ]
-    )
+    pdftk_args = [
+      pdf_input_path,
+      "output", pdf_output_file,
+      "owner_pw", random_if_undef(owner_pw),
+      "user_pw",  random_if_undef(user_pw),
+      "encrypt_128bit", "allow", "Printing", "CopyContents"
+    ]
 
-    case status do
-      0 ->  { :ok, pdf_output_file }
-      _ ->  { :error, "Encrpying the PDF via pdftk failed" }
+    {stderr, exit_code} = System.cmd(pdftk_path, pdftk_args, stderr_to_stdout: true)
+
+    case exit_code do
+      0 ->  {:ok, pdf_output_file}
+      _ ->  {:error, {:pdftk, stderr}}
     end
   end
 
