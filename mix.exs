@@ -27,8 +27,8 @@ defmodule PdfGenerator.Mixfile do
 
   def description do
     """
-    A wrapper for wkhtmltopdf (HTML to PDF) and PDFTK (adds in encryption) for
-    use in Elixir projects.
+    A wrapper for wkhtmltopdf and chrome-headless(puppeteer) with optional
+    support for encryption via pdftk.
     """
   end
 
