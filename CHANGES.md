@@ -1,4 +1,14 @@
 # Changes
+  - 0.5.0
+    - **Got rid of Porcelain** dependency as it interferes with many builds using
+      plain `System.cmd/3`. Please note, that as of the documentation
+      (https://hexdocs.pm/elixir/System.html#cmd/3) ports will be closed but in
+      case wkhtmltopdf somehow hangs, nobody takes care of terminating it.
+    - Refactored some sections
+    - **Support URLs** instead of just plain HTML
+    - **Support for chrome-headless** for (at least for me) faster and nicer renderings.
+    - Since this is hopefully helpful, I rose the version to 0.5.0 even tough
+      the API stays consistent
   - 0.4.0
     - Got rid of misc_random dependency. This was here to manage between
       depreciated random functions in Erlang. We go ahead using plain
@@ -63,7 +73,6 @@
     - make paths configurable in `config/ENV.exs` as well
     - add some tests (Yay!)
     - better README- 0.3.0
-
   - 0.2.0 
     - adding support for PDFTK to create encrypted PDFs
     - **API-CHANGE** PdfGenerator.generate now returns tuple `{:ok, file_name}`

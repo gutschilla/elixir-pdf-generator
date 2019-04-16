@@ -169,7 +169,17 @@ defmodule PdfGenerator do
 
   @spec make_command(generator, opts, content, {html_path, pdf_path}) :: {path, list()}
   def make_command(:chrome, options, content, {html_path, pdf_path}) do
-    executable = System.find_executable("chrome-headless-render-pdf")
+    executable_on_path = System.find_executable("chrome-headless-render-pdf")
+    nodejs_on_path     = System.find_executable("nodejs")
+    js_file = Application.app_dir(:pdf_generator) <> "/../../../../node_modules/chrome-headless-render-pdf/dist/cli/chrome-headless-render-pdf.js"
+
+    {executable, executable_args} =
+      if options[:prefer_system_executable] && is_binary(executable_on_path) do
+        {executable_on_path, []}
+      else
+        {nodejs_on_path, [js_file]}
+      end
+
     {width, height} = make_dimensions(options)
     more_params = options[:shell_params] || []
     source =
@@ -177,13 +187,13 @@ defmodule PdfGenerator do
         {:url,  url} -> url
         _html        -> "file://" <> html_path
       end
-    arguments = [
+    arguments = executable_args ++ [
       "--url", source,
       "--pdf", pdf_path,
       "--paper-width",   width,
       "--paper-height", height,
     ] ++ more_params
-    {executable, arguments}
+    {executable, arguments} # |> IO.inspect()
   end
 
   def make_command(:wkhtmltopdf, options, content, {html_path, pdf_path}) do

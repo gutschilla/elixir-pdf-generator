@@ -31,6 +31,18 @@ defmodule PdfGeneratorTest do
     assert {:ok, "%PDF-1" <> _pdf} = @html |> PdfGenerator.generate_binary
   end
 
+  test "chrome-headless" do
+    {:ok, temp_filename } = PdfGenerator.generate(@html, generator: :chrome, page_size: "A5")
+
+    # File should exist and has some size
+    file_info = File.stat! temp_filename
+    assert file_info.size > 0
+    pdf = File.read! temp_filename
+
+    # PDF header should be present
+    assert String.slice( pdf, 0, 6) == "%PDF-1"
+  end
+
   test "generate! returns a filename" do
     @html
     |> PdfGenerator.generate!

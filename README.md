@@ -4,7 +4,7 @@ A wrapper for wkhtmltopdf (HTML to PDF) and PDFTK (adds in encryption) for use
 in Elixir projects. If available, it will use xvfb-run (x virtual frame buffer)
 to use wkhtmltopdf on systems that have no X installed, e.g. a server.
 
-# New in 0.5.0 - farewell Porcelain, hello chrome-headless
+# New in 0.5.0 - farewell Porcelain, hello chrome-headless (puppeteer)
 
   - 0.5.0
     - **Got rid of Porcelain** dependency as it interferes with many builds using
@@ -19,30 +19,29 @@ to use wkhtmltopdf on systems that have no X installed, e.g. a server.
 
 For a proper changelog, see [CHANGES](CHANGES.md)
 
-# System prerequisites (either wkhtmltopdf or nodejs)
+# System prerequisites (either wkhtmltopdf or nodejs and maybe pdftk)
 
-Download wkhtmltopdf and place it in your $PATH. Current binaries can be found
-here: http://wkhtmltopdf.org/downloads.html
+1. Run `npm install`. This requires [nodejs](https://nodejs.org), of course.
+   This will install a recent chromium and chromedriver to run Chrome in
+   headless mode and use this browser and its API to print PDFs.
 
 **OR***
 
-Run `npm install`. This requires [nodejs](https://nodejs.org), of course. This
-will install a recent chromium and chromedriver to run Chrome in headless mode
-and use this browser and its API to print PDFs.
+2. Download wkhtmltopdf and place it in your $PATH. Current binaries can be
+   found here: http://wkhtmltopdf.org/downloads.html
+   
+   * _(optional)_ To use wkhtmltopdf on systems without an X window server
+     installed, please install `xvfb-run` from your repository (on
+     Debian/Ubuntu: `sudo apt-get install xvfb`).
 
-_(optional)_ To use wkhtmltopdf on systems without an X window server installed,
-please install `xvfb-run` from your repository (on Debian/Ubuntu: `sudo apt-get
-install xvfb`).
+  * On current (2018) Macintosh computers `/usr/X11/bin/xvfb` should be
+    available and is reported to do the same thing. _warning:** This is untested.
+    PLS report to me if you ran this successfully on a Mac.
 
-On current (2018) Macintosh computers `/usr/X11/bin/xvfb` should be available
-and is reported to do the same thing. _warning:_ This is untested. PLS report to
-me if you ran this successfully on a Mac.
+**AND MAYBE**
 
-_(optional)_ For best results, download goon and place it in your $PATH. Current
-binaries can be found here: https://github.com/alco/goon/releases
-
-_(optional)_ Install pdftk via your package manager or homebrew. The
-project page also contains a Windows installer
+3. _(optional)_ Install pdftk via your package manager or homebrew. The project
+   page also contains a Windows installer
 
 # Usage
 
@@ -69,27 +68,24 @@ $ iex -S mix
 
 html = "<html><body><p>Hi there!</p></body></html>"
 # be aware, this may take a while...
-{ :ok, filename }    = PdfGenerator.generate html, page_size: "A5"
-{ :ok, pdf_content } = File.read filename 
+{:ok, filename}    = PdfGenerator.generate(html, page_size: "A5")
+{:ok, pdf_content} = File.read(filename) 
 
 # or, if you prefer methods that raise on error:
-filename            = PdfGenerator.generate! html
+filename = PdfGenerator.generate!(html, generator: :chrome)
 ```
 
 Or, pass some URL
 
 ```
-url = "http://google.com"
-{ :ok, filename }    = PdfGenerator.generate {:url, url}, page_size: "A5"
-...
+PdfGenerator.generate {:url, "http://google.com"}, page_size: "A5"
 ```
 
 Or, use chrome-headless
 
 ```
-url = "http://google.com"
-{ :ok, filename }    = PdfGenerator.generate {:url, url}, page_size: "A5", renderer: :chrome
-...
+html_works_too = "<html><body><h1>Minimalism!"
+{:ok, filename}    = PdfGenerator.generate html_works_too, generator: :chrome
 ```
 
 Or use the bang-methods:
