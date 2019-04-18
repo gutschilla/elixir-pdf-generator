@@ -31,7 +31,7 @@ defmodule PdfGeneratorTest do
     assert {:ok, "%PDF-1" <> _pdf} = @html |> PdfGenerator.generate_binary
   end
 
-  test "chrome-headless" do
+  test "chrome-headless from file" do
     {:ok, temp_filename } = PdfGenerator.generate(@html, generator: :chrome, page_size: "A5")
 
     # File should exist and has some size
@@ -41,6 +41,12 @@ defmodule PdfGeneratorTest do
 
     # PDF header should be present
     assert String.slice( pdf, 0, 6) == "%PDF-1"
+  end
+
+  test "chrome-headless from URL (assuming google.com is up and running)" do
+    {status, result} = PdfGenerator.generate({:url, "http://google.com"}, generator: :chrome)
+    assert status == :ok
+    assert result |> File.read! |> String.slice(0, 6) == "%PDF-1"
   end
 
   test "generate! returns a filename" do

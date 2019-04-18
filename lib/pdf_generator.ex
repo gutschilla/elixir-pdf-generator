@@ -83,10 +83,12 @@ defmodule PdfGenerator do
 
   ## Options
 
+   * `:generator` – either `chrome` or `wkhtmltopdf` (default)
+   * `:no_sandbox` – disable sandbox for chrome, required to run as root (read: _docker_)
    * `:page_size` - output page size, defaults to "A4"
    * `:open_password` - password required to open PDF. Will apply encryption to PDF
    * `:edit_password` - password required to edit PDF
-   * `:shell_params` - list of command-line arguments to wkhtmltopdf
+   * `:shell_params` - list of command-line arguments to wkhtmltopdf or chrome
      see http://wkhtmltopdf.org/usage/wkhtmltopdf.txt for all options
    * `:delete_temporary` - true to remove the temporary html generated in
      the system tmp dir
@@ -171,6 +173,7 @@ defmodule PdfGenerator do
   def make_command(:chrome, options, content, {html_path, pdf_path}) do
     executable_on_path = System.find_executable("chrome-headless-render-pdf")
     nodejs_on_path     = System.find_executable("nodejs")
+    disable_sandbox    = Application.get_env(:pdf_generator, :disable_chrome_sandbox) || options[:no_sandbox]
     js_file = Application.app_dir(:pdf_generator) <> "/../../../../node_modules/chrome-headless-render-pdf/dist/cli/chrome-headless-render-pdf.js"
 
     {executable, executable_args} =
@@ -187,12 +190,17 @@ defmodule PdfGenerator do
         {:url,  url} -> url
         _html        -> "file://" <> html_path
       end
-    arguments = executable_args ++ [
-      "--url", source,
-      "--pdf", pdf_path,
-      "--paper-width",   width,
-      "--paper-height", height,
-    ] ++ more_params
+    arguments = List.flatten([
+      executable_args,
+      [
+        "--url", source,
+        "--pdf", pdf_path,
+        "--paper-width",   width,
+        "--paper-height", height,
+      ],
+      more_params,
+      if(disable_sandbox, do: ["--chrome-option", "--no-sandbox"], else: [])
+    ])
     {executable, arguments} # |> IO.inspect()
   end
 
