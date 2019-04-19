@@ -1,8 +1,9 @@
 # elixir-pdf-generator
 
-A wrapper for wkhtmltopdf (HTML to PDF) and PDFTK (adds in encryption) for use
-in Elixir projects. If available, it will use xvfb-run (x virtual frame buffer)
-to use wkhtmltopdf on systems that have no X installed, e.g. a server.
+A wrapper for both wkhtmltopdf and chrome-headless plus PDFTK (adds in
+encryption) for use in Elixir projects. If available, it will use xvfb-run (x
+virtual frame buffer) to use wkhtmltopdf on systems that have no X installed,
+e.g. a server.
 
 # New in 0.5.0 - farewell Porcelain, hello chrome-headless (puppeteer)
 
@@ -16,6 +17,15 @@ to use wkhtmltopdf on systems that have no X installed, e.g. a server.
     - **Support for chrome-headless** for (at least for me) faster and nicer renderings.
     - Since this is hopefully helpful, I rose the version to 0.5.0 even tough
       the API stays consistent
+  - 0.5.1
+    - allow chrome to be executed as root via default config option
+      `disable_chrome_sandbox` – this is required for an easy usage within a
+      docker container as in
+      [elixir-pdf-server](https://github.com/gutschilla/elixir-pdf-server)
+  - 0.5.2
+    - **BUGFIX** introduced in 0.5.0 when global options to wkhtmltopdf weren't
+      accepted any more due to wrong shell parameter order. Thanks to
+      [manukall](https://github.com/manukall) for reporting.
 
 For a proper changelog, see [CHANGES](CHANGES.md)
 

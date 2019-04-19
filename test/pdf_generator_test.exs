@@ -78,7 +78,7 @@ defmodule PdfGeneratorTest do
     @html
     |> PdfGenerator.generate!(delete_temporary: true)
     |> String.replace( ~r(\.pdf$), ".html")
-    |> File.exists?
+    |> File.exists?()
     |> refute
 
     # cannot really be sure if temporyr file was deleted but this shouldn't
@@ -86,6 +86,13 @@ defmodule PdfGeneratorTest do
     # make sure no other process wrote something in there which isn't exactly
     # robust.
     assert {:ok, "%PDF-1" <> _pdf} = @html |> PdfGenerator.generate_binary(delete_temporary: true)
+  end
+
+  test "shell_params are accepted" do
+    @html
+    |> PdfGenerator.generate!(shell_params: ["--orientation", "landscape", "--margin-right", "0"])
+    |> File.exists?()
+    |> assert
   end
 
 end

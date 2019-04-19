@@ -211,12 +211,12 @@ defmodule PdfGenerator do
         {:url, url} -> url
         _html       -> html_path
       end
-    more_params = options[:shell_params] || []
-    arguments = [
+    shell_params = options[:shell_params] || []
+    arguments = List.flatten([
+      shell_params,
       "--page-size", options[:page_size] || "A4",
       source, pdf_path
-    ] ++ more_params
-
+    ])
     # for wkhtmltopdf we support prefixes like ["xvfb-run", "-a"] to precede the actual command
     case get_command_prefix(options) do
       nil                    -> {executable, arguments}
