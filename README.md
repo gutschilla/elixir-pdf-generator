@@ -31,7 +31,7 @@ For a proper changelog, see [CHANGES](CHANGES.md)
 
 # System prerequisites (either wkhtmltopdf or nodejs and maybe pdftk)
 
-1. Run `npm install`. This requires [nodejs](https://nodejs.org), of course.
+1. Run `npm install chrome-headless-render-pdf puppeteer`. This requires [nodejs](https://nodejs.org), of course.
    This will install a recent chromium and chromedriver to run Chrome in
    headless mode and use this browser and its API to print PDFs.
 
@@ -39,7 +39,7 @@ For a proper changelog, see [CHANGES](CHANGES.md)
 
 2. Download wkhtmltopdf and place it in your $PATH. Current binaries can be
    found here: http://wkhtmltopdf.org/downloads.html
-   
+
    * _(optional)_ To use wkhtmltopdf on systems without an X window server
      installed, please install `xvfb-run` from your repository (on
      Debian/Ubuntu: `sudo apt-get install xvfb`).
@@ -59,11 +59,11 @@ Add this to your dependencies in your mix.exs:
 
     def application do
         [applications: [
-            :logger, 
+            :logger,
             :pdf_generator # <-- add this
         ]]
     end
-    
+
     defp deps do
         [
             # ... whatever else
@@ -79,7 +79,7 @@ $ iex -S mix
 html = "<html><body><p>Hi there!</p></body></html>"
 # be aware, this may take a while...
 {:ok, filename}    = PdfGenerator.generate(html, page_size: "A5")
-{:ok, pdf_content} = File.read(filename) 
+{:ok, pdf_content} = File.read(filename)
 
 # or, if you prefer methods that raise on error:
 filename = PdfGenerator.generate!(html, generator: :chrome)
@@ -109,19 +109,19 @@ pdf_binary = PdfGenerator.generate_binary! "<html>..."
 
 This module will automatically try to finde both `wkhtmltopdf` and `pdftk` in
 your path. But you may override or explicitly set their paths in your
-`config/config.exs`. 
+`config/config.exs`.
 
 ```
 config :pdf_generator,
     wkhtml_path:    "/usr/bin/wkhtmltopdf",   # <-- this program actually does the heavy lifting
     pdftk_path:     "/usr/bin/pdftk"          # <-- only needed for PDF encryption
 ```
- 
+
 or, if you prefer shrome-headless
 
 ```
 config :pdf_generator,
-    use_chrome: true             # <-- will be default by 0.6.0 
+    use_chrome: true             # <-- will be default by 0.6.0
     pdftk_path: "/usr/bin/pdftk" # <-- only needed for PDF encryption
 ```
 
@@ -134,7 +134,7 @@ an X Window server, but your server (or Mac) does not have one installed,
 you may find the `command_prefix` handy:
 
 ```
-PdfGenerator.generate "<html..", command_prefix: "xvfb-run" 
+PdfGenerator.generate "<html..", command_prefix: "xvfb-run"
 ```
 
 This can also be configured globally in your `config/config.exs`:
@@ -158,8 +158,8 @@ config :pdf_generator,
 
 - `filename` - filename for the output pdf file (without .pdf extension, defaults to a random string)
 
-- `page_size`:        
-  * defaults to `A4`, see `wkhtmltopdf` for more options 
+- `page_size`:
+  * defaults to `A4`, see `wkhtmltopdf` for more options
   * A4 will be translated to `page-height 11` and `page-width 8.5` when
     chrome-headless is used
 
@@ -167,11 +167,11 @@ config :pdf_generator,
 
 - `edit_password`:    requires `pdftk`, set password for edit permissions on PDF
 
-- `shell_params`:     pass custom parameters to `wkhtmltopdf`. **CAUTION: BEWARE OF SHELL INJECTIONS!** 
+- `shell_params`:     pass custom parameters to `wkhtmltopdf`. **CAUTION: BEWARE OF SHELL INJECTIONS!**
 
 - `command_prefix`:   prefix `wkhtmltopdf` with some command or a command with options
                       (e.g. `xvfb-run -a`, `sudo` ..)
-                      
+
 - `delete_temporary`: immediately remove temp files after generation
 
 ## Heroku Setup
@@ -186,7 +186,7 @@ https://github.com/gjaldon/phoenix-static-buildpack
 ```
 
 __note:__ The list also includes Elixir and Phoenix buildpacks to show you that they
-must be placed after `pdftk` and `wkhtmltopdf`. It won't work if you load the 
+must be placed after `pdftk` and `wkhtmltopdf`. It won't work if you load the
 Elixir and Phoenix buildpacks first.
 
 # Documentation

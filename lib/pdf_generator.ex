@@ -172,7 +172,7 @@ defmodule PdfGenerator do
   @spec make_command(generator, opts, content, {html_path, pdf_path}) :: {path, list()}
   def make_command(:chrome, options, content, {html_path, pdf_path}) do
     executable_on_path = System.find_executable("chrome-headless-render-pdf")
-    nodejs_on_path     = System.find_executable("nodejs")
+    nodejs_on_path     = System.find_executable("nodejs") || System.find_executable("node")
     disable_sandbox    = Application.get_env(:pdf_generator, :disable_chrome_sandbox) || options[:no_sandbox]
     js_file = Application.app_dir(:pdf_generator) <> "/../../../../node_modules/chrome-headless-render-pdf/dist/cli/chrome-headless-render-pdf.js"
 
@@ -199,7 +199,7 @@ defmodule PdfGenerator do
         "--paper-height", height,
       ],
       more_params,
-      if(disable_sandbox, do: ["--chrome-option", "--no-sandbox"], else: [])
+      if(disable_sandbox, do: ["--chrome-option=--no-sandbox"], else: [])
     ])
     {executable, arguments} # |> IO.inspect()
   end
