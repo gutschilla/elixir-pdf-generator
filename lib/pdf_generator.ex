@@ -84,6 +84,8 @@ defmodule PdfGenerator do
   ## Options
 
    * `:generator` – either `chrome` or `wkhtmltopdf` (default)
+   * `:prefer_system_executable` - set to `true` if you installed
+     chrome-headless-render-pdf globally
    * `:no_sandbox` – disable sandbox for chrome, required to run as root (read: _docker_)
    * `:page_size` - output page size, defaults to "A4"
    * `:open_password` - password required to open PDF. Will apply encryption to PDF
@@ -134,14 +136,15 @@ defmodule PdfGenerator do
     with {html_file, pdf_file}       <- make_file_paths(options),
          :ok                         <- maybe_write_html(content, html_file),
          {executable, arguments}     <- make_command(generator, options, content, {html_file, pdf_file}),
-         {console_stderr, exit_code} <- System.cmd(executable, arguments, stderr_to_stdout: true),       # unfortuantely wkhtmltopdf returns 0 on errors as well :-/
-         {:result_ok, true}          <- {:result_ok, result_ok(generator, console_stderr, exit_code)},   # so we inspect stderr instead
+         {:cmd, {stderr, exit_code}} <- {:cmd, System.cmd(executable, arguments, stderr_to_stdout: true)},       # unfortuantely wkhtmltopdf returns 0 on errors as well :-/
+         {:result_ok, true, stderr}  <- {:result_ok, result_ok(generator, stderr, exit_code), stderr},           # so we inspect stderr instead
          {:rm, :ok}                  <- {:rm, maybe_delete_temp(delete_temp, html_file)},
          {:ok, encrypted_pdf}        <- maybe_encrypt_pdf(pdf_file, open_password, edit_password) do
       {:ok, encrypted_pdf}
     else
-      {:error, reason} -> {:error, reason}
-      reason           -> {:error, reason}
+      {:error, reason}        -> {:error, reason}
+      {:result_ok, _, stderr} -> {:error, {:generator_failed, stderr}}
+      reason                  -> {:error, reason}
     end
   end
 
