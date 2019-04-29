@@ -26,19 +26,35 @@ e.g. a server.
     - **BUGFIX** introduced in 0.5.0 when global options to wkhtmltopdf weren't
       accepted any more due to wrong shell parameter order. Thanks to
       [manukall](https://github.com/manukall) for reporting.
+  - 0.5.3
+    - **BUGFIX** introduced in 0.5.0 when certain shells don't accept
+      `["foo=bar", …]` parameters which should correctly be `["foo", "bar"]`
+      Thanks to [@egze](https://github.com/egze) for submitting a patch.
+    - Refactored `PathAgent` that holds configuration state for readability and
+      more fashionable and extensible error messages. Extensible towards new
+      generators.
 
 For a proper changelog, see [CHANGES](CHANGES.md)
 
 # System prerequisites (either wkhtmltopdf or nodejs and maybe pdftk)
 
+## chrome-headless
+
 1. Run `npm install`. This requires [nodejs](https://nodejs.org), of course.
    This will install a recent chromium and chromedriver to run Chrome in
    headless mode and use this browser and its API to print PDFs.
-
-**OR***
+   
+   On some machines, this doesn't install Chromium and fails. Here's how to get
+   this running on Ubtunu 18:
+   
+   ```
+   
+   ```
 
 2. Download wkhtmltopdf and place it in your $PATH. Current binaries can be
    found here: http://wkhtmltopdf.org/downloads.html
+   
+   D
    
    * _(optional)_ To use wkhtmltopdf on systems without an X window server
      installed, please install `xvfb-run` from your repository (on
@@ -67,7 +83,7 @@ Add this to your dependencies in your mix.exs:
     defp deps do
         [
             # ... whatever else
-            { :pdf_generator, ">=0.5.0" }, # <-- and this
+            { :pdf_generator, ">=0.5.3" }, # <-- and this
         ]
     end
 
