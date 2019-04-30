@@ -49,6 +49,11 @@ defmodule PdfGeneratorTest do
     assert result |> File.read! |> String.slice(0, 6) == "%PDF-1"
   end
 
+  test "chrome's no-sandbox option doesn't crash" do
+    {_status, result} = PdfGenerator.generate({:url, "http://google.com"}, generator: :chrome, disable_chrome_sandbox: true)
+    assert result |> File.read! |> String.slice(0, 6) == "%PDF-1"
+  end
+
   test "generate! returns a filename" do
     @html
     |> PdfGenerator.generate!

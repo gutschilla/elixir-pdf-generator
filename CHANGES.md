@@ -1,4 +1,23 @@
 # Changes
+
+  - 0.5.3
+    - **BUGFIX** introduced in 0.5.0 when certain shells don't accept
+      `["foo=bar", …]` parameters which should correctly be `["foo", "bar"]`
+      Thanks to [@egze](https://github.com/egze) for submitting a patch.
+    - Refactored `PathAgent` that holds configuration state for readability and
+      more fashionable and extensible error messages. Extensible towards new
+      generators.
+    - Updated README to be more elaborative on how to install `wkhtmltopdf` and
+      `chrome-headless-render-pdf`
+  - 0.5.2
+    - **BUGFIX** introduced in 0.5.0 when global options to wkhtmltopdf weren't
+      accepted any more due to wrong shell parameter order. Thanks to
+      [manukall](https://github.com/manukall) for reporting.
+  - 0.5.1
+    - allow chrome to be executed as root via default config option
+      `disable_chrome_sandbox` – this is required for an easy usage within a
+      docker container as in
+      [elixir-pdf-server](https://github.com/gutschilla/elixir-pdf-server)
   - 0.5.0
     - **Got rid of Porcelain** dependency as it interferes with many builds using
       plain `System.cmd/3`. Please note, that as of the documentation

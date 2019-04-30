@@ -137,14 +137,14 @@ defmodule PdfGenerator do
          :ok                         <- maybe_write_html(content, html_file),
          {executable, arguments}     <- make_command(generator, options, content, {html_file, pdf_file}),
          {:cmd, {stderr, exit_code}} <- {:cmd, System.cmd(executable, arguments, stderr_to_stdout: true)},       # unfortuantely wkhtmltopdf returns 0 on errors as well :-/
-         {:result_ok, true, stderr}  <- {:result_ok, result_ok(generator, stderr, exit_code), stderr},           # so we inspect stderr instead
+         {:result_ok, true, _err}    <- {:result_ok, result_ok(generator, stderr, exit_code), stderr},           # so we inspect stderr instead
          {:rm, :ok}                  <- {:rm, maybe_delete_temp(delete_temp, html_file)},
          {:ok, encrypted_pdf}        <- maybe_encrypt_pdf(pdf_file, open_password, edit_password) do
       {:ok, encrypted_pdf}
     else
-      {:error, reason}        -> {:error, reason}
-      {:result_ok, _, stderr} -> {:error, {:generator_failed, stderr}}
-      reason                  -> {:error, reason}
+      {:error, reason}     -> {:error, reason}
+      {:result_ok, _, err} -> {:error, {:generator_failed, err}}
+      reason               -> {:error, reason}
     end
   end
 
@@ -174,16 +174,17 @@ defmodule PdfGenerator do
 
   @spec make_command(generator, opts, content, {html_path, pdf_path}) :: {path, list()}
   def make_command(:chrome, options, content, {html_path, pdf_path}) do
-    executable_on_path = System.find_executable("chrome-headless-render-pdf")
-    nodejs_on_path     = System.find_executable("nodejs")
+    chrome_executable  = PdfGenerator.PathAgent.get.chrome_path
+    node_executable    = PdfGenerator.PathAgent.get.node_path
     disable_sandbox    = Application.get_env(:pdf_generator, :disable_chrome_sandbox) || options[:no_sandbox]
+    # FIXME: this won't work in releases
     js_file = Application.app_dir(:pdf_generator) <> "/../../../../node_modules/chrome-headless-render-pdf/dist/cli/chrome-headless-render-pdf.js"
 
     {executable, executable_args} =
-      if options[:prefer_system_executable] && is_binary(executable_on_path) do
-        {executable_on_path, []}
+      if options[:prefer_system_executable] && is_binary(chrome_executable) do
+        {chrome_executable, []}
       else
-        {nodejs_on_path, [js_file]}
+        {node_executable, [js_file]}
       end
 
     {width, height} = make_dimensions(options)
