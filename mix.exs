@@ -5,8 +5,8 @@ defmodule PdfGenerator.Mixfile do
     [
       app: :pdf_generator,
       name: "PDF Generator",
-      version: "0.3.7",
-      elixir: ">= 1.0.0",
+      version: "0.5.3",
+      elixir: ">= 1.1.0",
       deps: deps(),
       description: description(),
       package: package(),
@@ -20,15 +20,15 @@ defmodule PdfGenerator.Mixfile do
   # Type `mix help compile.app` for more information
   def application do
     [
-      applications: [ :logger, :porcelain ],
+      applications: [:logger],
       mod: { PdfGenerator, [] }
     ]
   end
 
   def description do
     """
-    A wrapper for wkhtmltopdf (HTML to PDF) and PDFTK (adds in encryption) for
-    use in Elixir projects.
+    A wrapper for wkhtmltopdf and chrome-headless(puppeteer) with optional
+    support for encryption via pdftk.
     """
   end
 
@@ -46,11 +46,7 @@ defmodule PdfGenerator.Mixfile do
   defp deps do
     [
         # communication with external programs
-        {:porcelain, "~> 2.0"},
-        # a helper
-        {:misc_random, ">=0.2.6" },
-        # generate docs
-        {:ex_doc, "~> 0.16", only: :dev, runtime: false}
+        {:ex_doc, "~> 0.19", only: :dev, runtime: false}
     ]
   end
 end

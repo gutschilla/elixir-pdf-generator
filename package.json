@@ -1,0 +1,34 @@
+{
+  "name": "elixir-pdf-generator",
+  "version": "0.5.0",
+  "description": "wrapper around wkhtmltopdf and chrome-headless",
+  "main": "index.js",
+  "directories": {
+    "doc": "doc",
+    "lib": "lib",
+    "test": "test"
+  },
+  "scripts": {
+    "test": "test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/gutschilla/elixir-pdf-generator.git"
+  },
+  "keywords": [
+    "elixir",
+    "wkhtmltopdf",
+    "chrome-headless",
+    "puppeteer"
+  ],
+  "author": "Martin Dobberstein (Martin Gutsch)",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/gutschilla/elixir-pdf-generator/issues"
+  },
+  "homepage": "https://github.com/gutschilla/elixir-pdf-generator#readme",
+  "dependencies": {
+    "chrome-headless-render-pdf": "^1.8.2",
+    "puppeteer": "^1.14.0"
+  }
+}
