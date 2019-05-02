@@ -106,6 +106,7 @@ those generated with wkhtmltopdf.
 
 Add this to your dependencies in your mix.exs:
 
+```Elixir
     def application do
         [applications: [
             :logger,
@@ -119,10 +120,11 @@ Add this to your dependencies in your mix.exs:
             { :pdf_generator, ">=0.5.3" }, # <-- and this
         ]
     end
+```
 
 Then pass some html to PdfGenerator.generate
 
-```
+```Elixir
 $ iex -S mix
 
 html = "<html><body><p>Hi there!</p></body></html>"
@@ -149,7 +151,7 @@ html_works_too = "<html><body><h1>Minimalism!"
 
 Or use the bang-methods:
 
-```
+```Elixir
 filename   = PdfGenerator.generate! "<html>..."
 pdf_binary = PdfGenerator.generate_binary! "<html>..."
 ```
@@ -160,7 +162,7 @@ This module will automatically try to finde both `wkhtmltopdf` and `pdftk` in
 your path. But you may override or explicitly set their paths in your
 `config/config.exs`.
 
-```
+```Elixir
 config :pdf_generator,
     wkhtml_path:    "/usr/bin/wkhtmltopdf",   # <-- this program actually does the heavy lifting
     pdftk_path:     "/usr/bin/pdftk"          # <-- only needed for PDF encryption
@@ -182,13 +184,13 @@ If you want to run `wkhtmltopdf` with an unpatched verison of webkit that requir
 an X Window server, but your server (or Mac) does not have one installed,
 you may find the `command_prefix` handy:
 
-```
+```Elixir
 PdfGenerator.generate "<html..", command_prefix: "xvfb-run"
 ```
 
 This can also be configured globally in your `config/config.exs`:
 
-```
+```Elixir
 config :pdf_generator,
     command_prefix: "/usr/bin/xvfb-run"
 ```
@@ -198,7 +200,7 @@ you will need to configure `xvfb-run` to search for a free X server number,
 or set the server number explicitly. You can use the `command_prefix` to pass
 options to the `xvfb-run` command.
 
-```
+```Elixir
 config :pdf_generator,
     command_prefix: ["xvfb-run", "-a"]
 ```
