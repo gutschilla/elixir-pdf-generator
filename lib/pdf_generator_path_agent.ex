@@ -59,8 +59,8 @@ defmodule PdfGenerator.PathAgent do
   - :raise_on_missing_binaries -> raises on eiter binary missing
   """
   def raise_or_continue(options) do
-    wkhtml_exists = File.exists?(options[:wkhtml_path])
-    chrome_exists = File.exists?(options[:chrome_path])
+    wkhtml_exists = File.exists?(options[:wkhtml_path] || "")
+    chrome_exists = File.exists?(options[:chrome_path] || "")
 
     raise_on_wkhtml_missing = options[:raise_on_missing_wkhtmltopdf_binary]
     raise_on_chrome_missing = options[:raise_on_missing_chrome_binary]
