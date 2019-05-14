@@ -1,42 +1,18 @@
 # elixir-pdf-generator
 
 A wrapper for both wkhtmltopdf and chrome-headless plus PDFTK (adds in
-encryption) for use in Elixir projects. 
+encryption) for use in Elixir projects.
 
-If available, it will use xvfb-run (x
-virtual frame buffer) to use wkhtmltopdf on systems that have no X installed,
-e.g. a server.
+```Elixir
+{:ok, pdf} = PdfGenerator.generate_binary("<html><body><h1>Yay!</h1></body></html>")
+```
 
-# New in 0.5.0 - farewell Porcelain, hello chrome-headless (puppeteer)
+# Latest release v0.5.4 on 2019-05-14
 
-  - 0.5.0
-    - **Got rid of Porcelain** dependency as it interferes with many builds using
-      plain `System.cmd/3`. Please note, that as of the documentation
-      (https://hexdocs.pm/elixir/System.html#cmd/3) ports will be closed but in
-      case wkhtmltopdf somehow hangs, nobody takes care of terminating it.
-    - Refactored some sections
-    - **Support URLs** instead of just plain HTML
-    - **Support for chrome-headless** for (at least for me) faster and nicer renderings.
-    - Since this is hopefully helpful, I rose the version to 0.5.0 even tough
-      the API stays consistent
-  - 0.5.1
-    - allow chrome to be executed as root via default config option
-      `disable_chrome_sandbox` – this is required for an easy usage within a
-      docker container as in
-      [elixir-pdf-server](https://github.com/gutschilla/elixir-pdf-server)
-  - 0.5.2
-    - **BUGFIX** introduced in 0.5.0 when global options to wkhtmltopdf weren't
-      accepted any more due to wrong shell parameter order. Thanks to
-      [manukall](https://github.com/manukall) for reporting.
-  - 0.5.3
-    - **BUGFIX** introduced in 0.5.0 when certain shells don't accept
-      `["foo=bar", …]` parameters which should correctly be `["foo", "bar"]`
-      Thanks to [@egze](https://github.com/egze) for submitting a patch.
-    - Refactored `PathAgent` that holds configuration state for readability and
-      more fashionable and extensible error messages. Extensible towards new
-      generators.
-    - Updated README to be more elaborative on how to install `wkhtmltopdf` and
-      `chrome-headless-render-pdf`
+- 0.5.4
+  - **BUGFIX** introduced in 0.5.0 that would crash `PdfGenerator.PathAgent`
+  when chrome isn't found on path in certain situation. Thanks to
+  [@radditude](https://github.com/radditude) for submitting a patch.
 
 For a proper changelog, see [CHANGES](CHANGES.md)
 

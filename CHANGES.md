@@ -1,5 +1,9 @@
 # Changes
 
+  - 0.5.4
+    - **BUGFIX** introduced in 0.5.0 that would crash `PdfGenerator.PathAgent`
+      when chrome isn't found on path in certain situation. Thanks to
+      [@radditude](https://github.com/radditude) for submitting a patch.
   - 0.5.3
     - **BUGFIX** introduced in 0.5.0 when certain shells don't accept
       `["foo=bar", …]` parameters which should correctly be `["foo", "bar"]`
