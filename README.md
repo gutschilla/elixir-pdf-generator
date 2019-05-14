@@ -225,6 +225,12 @@ config :pdf_generator,
 
 - `delete_temporary`: immediately remove temp files after generation
 
+## Contribution; how to run tests
+
+You're more than welcome ot submit patches. Please run `mix test` to ensure at bit of stability. Tests require a full-fledged environment, with all of `wkhtmltopdf`, `xvfb` and `chrome-headless-render-pdf` available path. Also make to to have run `npm install` in the app's base directory (will install chrome-headless-render-pdf non-globally in there). With all these installed, `mix test` should run smoothly.
+
+_Hint_: Getting `:enoent` errors ususally means that chrome or xvfb couldn't be run. Yes, this should output a nicer error.
+
 ## Heroku Setup
 
 If you want to use this project on heroku, you can use buildpacks instead of binaries
