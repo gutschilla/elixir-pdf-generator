@@ -203,7 +203,7 @@ defmodule PdfGenerator do
         "--paper-height", height,
       ],
       more_params,
-      if(disable_sandbox, do: ["--chrome-option", "--no-sandbox"], else: [])
+      if(disable_sandbox, do: ["--chrome-option=--no-sandbox"], else: [])
     ])
     {executable, arguments} # |> IO.inspect()
   end
