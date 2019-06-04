@@ -43,7 +43,7 @@ those generated with wkhtmltopdf.
    packaged in your distribution (I will add support for this later).
 
    On some machines, this doesn't install Chromium and fails. Here's how to get
-   this running on Ubtunu 18:
+   this running on Ubuntu 18:
    
    ```
    DEBIAN_FRONTEND=noninteractive PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=TRUE \
@@ -56,13 +56,15 @@ those generated with wkhtmltopdf.
 2. Download wkhtmltopdf and place it in your $PATH. Current binaries can be
    found here: http://wkhtmltopdf.org/downloads.html
    
-   For the impatient:
+   For the impatient (Ubuntu18):
    
    ```
    apt-get -y install xfonts-base xfonts-75dpi \
     && wget https://downloads.wkhtmltopdf.org/0.12/0.12.5/wkhtmltox_0.12.5-1.bionic_amd64.deb \
     && dpkg -i wkhtmltox_0.12.5-1.bionic_amd64.deb
    ```
+   
+## optional dependencies
 
 3. _optional:_ Install `xvfb` (shouldn't be required with the binary mentioned above):
 
@@ -93,7 +95,7 @@ Add this to your dependencies in your mix.exs:
     defp deps do
         [
             # ... whatever else
-            { :pdf_generator, ">=0.5.3" }, # <-- and this
+            { :pdf_generator, ">=0.5.4" }, # <-- and this
         ]
     end
 ```
@@ -121,8 +123,8 @@ PdfGenerator.generate {:url, "http://google.com"}, page_size: "A5"
 Or, use chrome-headless
 
 ```
-html_works_too = "<html><body><h1>Minimalism!"
-{:ok, filename}    = PdfGenerator.generate html_works_too, generator: :chrome
+html_works_too  = "<html><body><h1>Minimalism!"
+{:ok, filename} = PdfGenerator.generate html_works_too, generator: :chrome
 ```
 
 Or use the bang-methods:
@@ -148,37 +150,8 @@ or, if you prefer shrome-headless
 
 ```
 config :pdf_generator,
-    use_chrome: true             # <-- will be default by 0.6.0
-    pdftk_path: "/usr/bin/pdftk" # <-- only needed for PDF encryption
-```
-
-## Running wkhtml headless (server-mode)
-
-This section only applies to `wkhtmltopdf` users.
-
-If you want to run `wkhtmltopdf` with an unpatched verison of webkit that requires
-an X Window server, but your server (or Mac) does not have one installed,
-you may find the `command_prefix` handy:
-
-```Elixir
-PdfGenerator.generate "<html..", command_prefix: "xvfb-run"
-```
-
-This can also be configured globally in your `config/config.exs`:
-
-```Elixir
-config :pdf_generator,
-    command_prefix: "/usr/bin/xvfb-run"
-```
-
-If you will be generating multiple PDFs simultaneously, or in rapid succession,
-you will need to configure `xvfb-run` to search for a free X server number,
-or set the server number explicitly. You can use the `command_prefix` to pass
-options to the `xvfb-run` command.
-
-```Elixir
-config :pdf_generator,
-    command_prefix: ["xvfb-run", "-a"]
+    use_chrome: true,                          # <-- make sure you installed node/puppetteer
+    raise_on_missing_wkhtmltopdf_binary: false # <-- so the app won't complain about a missing wkhtmltopdf
 ```
 
 ## More options
@@ -221,6 +194,35 @@ https://github.com/gjaldon/phoenix-static-buildpack
 __note:__ The list also includes Elixir and Phoenix buildpacks to show you that they
 must be placed after `pdftk` and `wkhtmltopdf`. It won't work if you load the
 Elixir and Phoenix buildpacks first.
+
+## Running non-patched wkhtmltopdf headless
+
+This section only applies to `wkhtmltopdf` users using wkhtmltopdf w/o the qt patch. If you are using the latest 0.12 binaries from https://downloads.wkhtmltopdf.org (recommended) you can safely skip this section.
+
+If you want to run `wkhtmltopdf` with an unpatched verison of webkit that requires
+an X Window server, but your server (or Mac) does not have one installed,
+you may find the `command_prefix` handy:
+
+```Elixir
+PdfGenerator.generate "<html..", command_prefix: "xvfb-run"
+```
+
+This can also be configured globally in your `config/config.exs`:
+
+```Elixir
+config :pdf_generator,
+    command_prefix: "/usr/bin/xvfb-run"
+```
+
+If you will be generating multiple PDFs simultaneously, or in rapid succession,
+you will need to configure `xvfb-run` to search for a free X server number,
+or set the server number explicitly. You can use the `command_prefix` to pass
+options to the `xvfb-run` command.
+
+```Elixir
+config :pdf_generator,
+    command_prefix: ["xvfb-run", "-a"]
+```
 
 # Documentation
 
