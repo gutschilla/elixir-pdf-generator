@@ -60,8 +60,8 @@ those generated with wkhtmltopdf.
    
    ```
    apt-get -y install xfonts-base xfonts-75dpi \
-    && wget https://downloads.wkhtmltopdf.org/0.12/0.12.5/wkhtmltox_0.12.5-1.bionic_amd64.deb \
-    && dpkg -i wkhtmltox_0.12.5-1.bionic_amd64.deb
+    && wget https://downloads.wkhtmltopdf.org/0.12/0.12.5/wkhtmltox_0.12.5-1.xenial_amd64.deb \
+    && dpkg -i wkhtmltox_0.12.5-1.xenial_amd64.deb
    ```
    
 ## optional dependencies
