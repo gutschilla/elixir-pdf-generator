@@ -10,10 +10,14 @@ encryption) for use in Elixir projects.
 # Latest release v0.5.5 on 2019-06-18
 
 - 0.5.5
-  - improved documentation on `prefer_system_executable: true` for chrome
+  - improved documentation on `prefer_system_executable: true` for chrome.
+    Thanks to [Martin Richer](https://github.com/richeterre) for rasining this
+    and a [PR](https://github.com/gutschilla/elixir-pdf-generator/pull/55)
   - improved documentation on `no_sandbox: true` for chrome in dockerized
     environment (running as root)
+  - clarify that wkhtmltopdf installation snippet is for Ubuntu 18.04.
   - log call options as debug info to Logger
+  - add "knows issues" section to README
 
 For a proper changelog, see [CHANGES](CHANGES.md)
 
@@ -57,13 +61,16 @@ those generated with wkhtmltopdf.
 2. Download wkhtmltopdf and place it in your $PATH. Current binaries can be
    found here: http://wkhtmltopdf.org/downloads.html
    
-   For the impatient (Ubuntu18):
+   For the impatient (Ubuntu 18.04 Bionic Beaver):
    
    ```
    apt-get -y install xfonts-base xfonts-75dpi \
     && wget https://downloads.wkhtmltopdf.org/0.12/0.12.5/wkhtmltox_0.12.5-1.bionic_amd64.deb \
     && dpkg -i wkhtmltox_0.12.5-1.bionic_amd64.deb
    ```
+   
+   For other distributions, refer to http://wkhtmltopdf.org/downloads.html – For
+   example, replace `bionic` with `xenial` if you're on Ubuntu 16.04.
    
 ## optional dependencies
 
@@ -241,3 +248,11 @@ config :pdf_generator,
 
 For more info, read the [docs on hex](http://hexdocs.pm/pdf_generator) or issue
 `h PdfGenerator` in your iex shell.
+
+# Known issues
+
+Unfortunately, with Elixir 1.7+ `System.cmd` seems to pass parameters
+differently to the environment than it did before, now requiring shell options
+like `--foo=bar` to be split up as `["--foo", "bar"]`. Since this library makes
+heavy use of command line parameters, I intend to bump the Elixir version to 1.7
+for that reason, starting with v0.6.0.

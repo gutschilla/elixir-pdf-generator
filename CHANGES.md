@@ -1,10 +1,14 @@
 # Changes
 
   - 0.5.5
-    - improved documentation on `prefer_system_executable: true` for chrome
+    - improved documentation on `prefer_system_executable: true` for chrome.
+      Thanks to [Martin Richer](https://github.com/richeterre) for rasining this
+      and a [PR](https://github.com/gutschilla/elixir-pdf-generator/pull/55)
     - improved documentation on `no_sandbox: true` for chrome in dockerized
       environment (running as root)
+    - clarify that wkhtmltopdf installation snippet is for Ubuntu 18.04.
     - log call options as debug info to Logger
+    - add "knows issues" section to README
   - 0.5.4
     - **BUGFIX** introduced in 0.5.0 that would crash `PdfGenerator.PathAgent`
       when chrome isn't found on path in certain situation. Thanks to
