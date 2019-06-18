@@ -7,12 +7,13 @@ encryption) for use in Elixir projects.
 {:ok, pdf} = PdfGenerator.generate_binary("<html><body><h1>Yay!</h1></body></html>")
 ```
 
-# Latest release v0.5.4 on 2019-05-14
+# Latest release v0.5.5 on 2019-06-18
 
-- 0.5.4
-  - **BUGFIX** introduced in 0.5.0 that would crash `PdfGenerator.PathAgent`
-  when chrome isn't found on path in certain situation. Thanks to
-  [@radditude](https://github.com/radditude) for submitting a patch.
+- 0.5.5
+  - improved documentation on `prefer_system_executable: true` for chrome
+  - improved documentation on `no_sandbox: true` for chrome in dockerized
+    environment (running as root)
+  - log call options as debug info to Logger
 
 For a proper changelog, see [CHANGES](CHANGES.md)
 
@@ -93,7 +94,7 @@ Add this to your dependencies in your mix.exs:
     defp deps do
         [
             # ... whatever else
-            { :pdf_generator, ">=0.5.3" }, # <-- and this
+            { :pdf_generator, ">=0.5.5" }, # <-- and this
         ]
     end
 ```
@@ -114,15 +115,26 @@ filename = PdfGenerator.generate!(html, generator: :chrome)
 
 Or, pass some URL
 
-```
+```Elixir
 PdfGenerator.generate {:url, "http://google.com"}, page_size: "A5"
 ```
 
-Or, use chrome-headless
+Or, use **chrome-headless** – if you're (most probably) using this as
+dependency, chrome won't be installed to this project directory but globally. We
+currently need to tell PdfGenerator this by setting the
+`prefer_system_executable: true` option. This will be default by v0.6.0.
 
-```
+```Elixir
 html_works_too = "<html><body><h1>Minimalism!"
-{:ok, filename}    = PdfGenerator.generate html_works_too, generator: :chrome
+{:ok, filename} = PdfGenerator.generate html_works_too, generator: :chrome, prefer_system_executable: true
+```
+
+If using chrome in a superuser/root environment (read: **docker**), make sure to
+pass an option to chrome to disable sandboxing. And be aware of the implications.
+
+```Elixir
+html_works_too = "<html><body><h1>I need Docker, baby docker is what I need!"
+{:ok, filename} = PdfGenerator.generate html_works_too, generator: :chrome, no_sandbox: true
 ```
 
 Or use the bang-methods:

@@ -1,5 +1,10 @@
 # Changes
 
+  - 0.5.5
+    - improved documentation on `prefer_system_executable: true` for chrome
+    - improved documentation on `no_sandbox: true` for chrome in dockerized
+      environment (running as root)
+    - log call options as debug info to Logger
   - 0.5.4
     - **BUGFIX** introduced in 0.5.0 that would crash `PdfGenerator.PathAgent`
       when chrome isn't found on path in certain situation. Thanks to

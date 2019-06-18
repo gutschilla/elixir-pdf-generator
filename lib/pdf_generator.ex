@@ -1,6 +1,8 @@
 defmodule PdfGenerator do
 
-  @vsn "0.5.0"
+  require Logger
+
+  @vsn "0.5.5"
 
   @moduledoc """
   # PdfGenerator
@@ -205,7 +207,8 @@ defmodule PdfGenerator do
       more_params,
       if(disable_sandbox, do: ["--chrome-option", "--no-sandbox"], else: [])
     ])
-    {executable, arguments} # |> IO.inspect()
+    {executable, arguments} |> inspect() |> Logger.debug()
+    {executable, arguments}
   end
 
   def make_command(:wkhtmltopdf, options, content, {html_path, pdf_path}) do
@@ -222,11 +225,14 @@ defmodule PdfGenerator do
       source, pdf_path
     ])
     # for wkhtmltopdf we support prefixes like ["xvfb-run", "-a"] to precede the actual command
-    case get_command_prefix(options) do
-      nil                    -> {executable, arguments}
-      [prefix | prefix_args] -> {prefix, prefix_args ++ [executable] ++ arguments}
-      prefix                 -> {prefix, [executable | arguments]}
-    end
+    {executable, arguments} =
+      case get_command_prefix(options) do
+        nil                    -> {executable, arguments}
+        [prefix | prefix_args] -> {prefix, prefix_args ++ [executable] ++ arguments}
+        prefix                 -> {prefix, [executable | arguments]}
+      end
+    {executable, arguments} |> inspect() |> Logger.debug()
+    {executable, arguments}
   end
 
   defp maybe_delete_temp(true,    file), do: File.rm(file)
