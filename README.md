@@ -158,12 +158,13 @@ config :pdf_generator,
     pdftk_path:     "/usr/bin/pdftk"          # <-- only needed for PDF encryption
 ```
 
-or, if you prefer shrome-headless
+or, if you prefer chrome-headless
 
 ```
 config :pdf_generator,
-    use_chrome: true,                          # <-- make sure you installed node/puppetteer
-    raise_on_missing_wkhtmltopdf_binary: false # <-- so the app won't complain about a missing wkhtmltopdf
+    use_chrome: true,                           # <-- make sure you installed node/puppeteer
+    prefer_system_executable: true              # <-- set this if you installed the NPM dependencies globally
+    raise_on_missing_wkhtmltopdf_binary: false, # <-- so the app won't complain about a missing wkhtmltopdf
 ```
 
 ## More options
