@@ -2,7 +2,7 @@ defmodule PdfGenerator do
 
   require Logger
 
-  @vsn "0.5.5"
+  @vsn "0.5.6"
 
   @moduledoc """
   # PdfGenerator
@@ -89,7 +89,7 @@ defmodule PdfGenerator do
    * `:prefer_system_executable` - set to `true` if you installed
      chrome-headless-render-pdf globally
    * `:no_sandbox` – disable sandbox for chrome, required to run as root (read: _docker_)
-   * `:page_size` - output page size, defaults to "A4"
+   * `:page_size` - output page size, defaults to "A4", other options are "letter" (US letter) and "A5"
    * `:open_password` - password required to open PDF. Will apply encryption to PDF
    * `:edit_password` - password required to edit PDF
    * `:shell_params` - list of command-line arguments to wkhtmltopdf or chrome
@@ -104,7 +104,7 @@ defmodule PdfGenerator do
   pdf_path_1 = PdfGenerator.generate "<html><body><h1>Boom</h1></body></html>"
   pdf_path_2 = PdfGenerator.generate(
     "<html><body><h1>Boom</h1></body></html>",
-    page_size:     "A5",
+    page_size:     "letter",
     open_password: "secret",
     edit_password: "g3h31m",
     shell_params: [ "--outline", "--outline-depth3", "3" ],
@@ -167,11 +167,12 @@ defmodule PdfGenerator do
 
   @doc ~s"""
   Returns `{width, height}` tuple for page sizes either as given or for A4 and
-  A5. Defaults to A4 sizes.
+  A5. Defaults to A4 sizes. In inches. Because chrome wants imperial.
   """
   def dimensions_for(%{page_width: width, page_height: height}), do: {width, height}
-  def dimensions_for(%{page_size: "A4"}),                        do: {"8.50", "11.0"}
-  def dimensions_for(%{page_size: "A5"}),                        do: {"4.25",  "5.5"}
+  def dimensions_for(%{page_size: "A4"}),                        do: {"8.26772", "11.695"}
+  def dimensions_for(%{page_size: "A5"}),                        do: {"5.8475",  "8.26772"}
+  def dimensions_for(%{page_size: "letter"}),                    do: {"8.5",     "11"}
   def dimensions_for(_map),                                      do: dimensions_for(%{page_size: "A4"})
 
   @spec make_command(generator, opts, content, {html_path, pdf_path}) :: {path, list()}

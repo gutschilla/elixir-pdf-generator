@@ -1,5 +1,11 @@
 # Changes
 
+  - 0.5.6
+    - **BUGFIX:** fix A4 and A5 paper sizes in inches for **chrome-headless**:
+    it's not 8.5 x 11.0 (US letter) but 8.26772 x 11.695 (DIN A4), the former
+    being chrome-headless defaults. This is important if you want to create
+    proper A4 pages
+    - Users printing **US letter** sized PDFs, please use `page_size: :letter`
   - 0.5.5
     - improved documentation on `prefer_system_executable: true` for chrome.
       Thanks to [Martin Richer](https://github.com/richeterre) for rasining this

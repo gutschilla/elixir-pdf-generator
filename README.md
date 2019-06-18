@@ -7,8 +7,14 @@ encryption) for use in Elixir projects.
 {:ok, pdf} = PdfGenerator.generate_binary("<html><body><h1>Yay!</h1></body></html>")
 ```
 
-# Latest release v0.5.5 on 2019-06-18
+# Latest release v0.5.5 and v0.5.6 on 2019-06-18
 
+- 0.5.6
+  - **BUGFIX:** fix A4 and A5 paper sizes in inches for **chrome-headless**:
+    it's not 8.5 x 11.0 (US letter) but 8.26772 x 11.695 (DIN A4), the former
+    being chrome-headless defaults. This is important if you want to create
+    proper A4 pages
+  - Users printing **US letter** sized PDFs, please use `page_size: :letter`
 - 0.5.5
   - improved documentation on `prefer_system_executable: true` for chrome.
     Thanks to [Martin Richer](https://github.com/richeterre) for rasining this
@@ -180,8 +186,7 @@ config :pdf_generator,
 
 - `page_size`:
   * defaults to `A4`, see `wkhtmltopdf` for more options
-  * A4 will be translated to `page-height 11` and `page-width 8.5` when
-    chrome-headless is used
+  * `letter` (for US letter) be translated to 8x11.5 inches (currently, only in chrome).
 
 - `open_password`:    requires `pdftk`, set password to encrypt PDFs with
 
