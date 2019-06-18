@@ -2,7 +2,7 @@ defmodule PdfGenerator do
 
   require Logger
 
-  @vsn "0.5.6"
+  @vsn "0.5.7"
 
   @moduledoc """
   # PdfGenerator
@@ -206,7 +206,7 @@ defmodule PdfGenerator do
         "--paper-height", height,
       ],
       more_params,
-      if(disable_sandbox, do: ["--chrome-option", "--no-sandbox"], else: [])
+      if(disable_sandbox, do: ["--chrome-option=--no-sandbox"], else: [])
     ])
     {executable, arguments} |> inspect() |> Logger.debug()
     {executable, arguments}
