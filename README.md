@@ -265,5 +265,5 @@ for that reason, starting with v0.6.0.
 # Contributing
 
 Contributions (Issues, PRs…) are more than welcome. Please ave a quick read at 
-the [Contribution tips](./Contribution.md), though. It's basically about scope 
+the [Contribution tips](./CONTRIBUTING.md), though. It's basically about scope 
 and kindness.
