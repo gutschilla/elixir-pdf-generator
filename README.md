@@ -261,3 +261,9 @@ differently to the environment than it did before, now requiring shell options
 like `--foo=bar` to be split up as `["--foo", "bar"]`. Since this library makes
 heavy use of command line parameters, I intend to bump the Elixir version to 1.7
 for that reason, starting with v0.6.0.
+
+# Contributing
+
+Contributions (Issues, PRs…) are more than welcome. Please ave a quick read at 
+the [Contribution tips](./Contribution.md), though. It's basically about scope 
+and kindness.
