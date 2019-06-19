@@ -264,3 +264,9 @@ like `--foo=bar` to be split up as `["--foo", "bar"]`. This behaviour seemingly
 went away with OTP 22 in May 2019 and Elixir 1.8.2. So if you run into issues,
 try upgrading to the latest Erlang/OTP and Elixir first, and do not hesitate
 file a report.
+
+# Contributing
+
+Contributions (Issues, PRs…) are more than welcome. Please ave a quick read at 
+the [Contribution tips](./CONTRIBUTING.md), though. It's basically about scope 
+and kindness.
