@@ -7,8 +7,10 @@ encryption) for use in Elixir projects.
 {:ok, pdf} = PdfGenerator.generate_binary("<html><body><h1>Yay!</h1></body></html>")
 ```
 
-# Latest release v0.5.5 and v0.5.6 on 2019-06-18
+# Latest release v0.5.5 – v0.5.7 on 2019-06-18
 
+- 0.5.7
+  - **BUGFIX:** fix chrome-option parameter handling
 - 0.5.6
   - **BUGFIX:** fix A4 and A5 paper sizes in inches for **chrome-headless**:
     it's not 8.5 x 11.0 (US letter) but 8.26772 x 11.695 (DIN A4), the former
@@ -258,6 +260,7 @@ For more info, read the [docs on hex](http://hexdocs.pm/pdf_generator) or issue
 
 Unfortunately, with Elixir 1.7+ `System.cmd` seems to pass parameters
 differently to the environment than it did before, now requiring shell options
-like `--foo=bar` to be split up as `["--foo", "bar"]`. Since this library makes
-heavy use of command line parameters, I intend to bump the Elixir version to 1.7
-for that reason, starting with v0.6.0.
+like `--foo=bar` to be split up as `["--foo", "bar"]`. This behaviour seemingly
+went away with OTP 22 in May 2019 and Elixir 1.8.2. So if you run into issues,
+try upgrading to the latest Erlang/OTP and Elixir first, and do not hesitate
+file a report.
