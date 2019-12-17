@@ -136,9 +136,8 @@ This requires [nodejs](https://nodejs.org), of course. This will install a
 recent chromium and chromedriver to run Chrome in headless mode and use this
 browser and its API to print PDFs globally on your machine.
    
-If you prefer a project-local install, just use `npm install` This will install
-dependencies under `./node_modules`. Be aware that those won't be packaged in
-your distribution (I will add support for this later).
+If you prefer a project-local install, use the `compile: "make chrome"` option
+in your mixfile's dependency-line.
 
 On some machines, this doesn't install Chromium and fails. Here's how to get
 this running on Ubuntu 18:
