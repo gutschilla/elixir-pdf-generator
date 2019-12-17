@@ -3,102 +3,16 @@
 A wrapper for both wkhtmltopdf and chrome-headless plus PDFTK (adds in
 encryption) for use in Elixir projects.
 
-```Elixir
-{:ok, pdf} = PdfGenerator.generate_binary("<html><body><h1>Yay!</h1></body></html>")
-```
+# Latest release v0.6.0 on 2019-12-17
 
-# Latest release v0.5.5 – v0.5.8 on 2019-12-17
-
-- 0.5.8
+- 0.6.0
+  - introducting `make` as build tool (optional) for chromium binaries
+    (puppeteer)
   - **BUGFIX:** documentation: option `pagesize` requires string argument
     (for example `"letter"` or `"A4"`)
   - updated some npm dependencies for chromium
-- 0.5.7
-  - **BUGFIX:** fix chrome-option parameter handling
-- 0.5.6
-  - **BUGFIX:** fix A4 and A5 paper sizes in inches for **chrome-headless**:
-    it's not 8.5 x 11.0 (US letter) but 8.26772 x 11.695 (DIN A4), the former
-    being chrome-headless defaults. This is important if you want to create
-    proper A4 pages
-  - Users printing **US letter** sized PDFs, please use `page_size: "letter"`
-- 0.5.5
-  - improved documentation on `prefer_system_executable: true` for chrome.
-    Thanks to [Martin Richer](https://github.com/richeterre) for rasining this
-    and a [PR](https://github.com/gutschilla/elixir-pdf-generator/pull/55)
-  - improved documentation on `no_sandbox: true` for chrome in dockerized
-    environment (running as root)
-  - clarify that wkhtmltopdf installation snippet is for Ubuntu 18.04.
-  - log call options as debug info to Logger
-  - add "knows issues" section to README
 
 For a proper changelog, see [CHANGES](CHANGES.md)
-
-# System prerequisites 
-
-It's either 
-
-* wkhtmltopdf or 
-
-* nodejs and possibly chrome/chromium
-
-## chrome-headless
-
-This will allow you to make more use of Javascript and advanced CSS as it's just
-your Chrome/Chromium browser rendering your web page as HTML and printing it as
-PDF. Rendering _tend_ to be a bit faster than with wkhtmltopdf. The price tag is
-that PDFs printed with chrome/chromium are usually considerably bigger than
-those generated with wkhtmltopdf.
-
-1. Run `npm -g install chrome-headless-render-pdf puppeteer`. 
-
-   This requires [nodejs](https://nodejs.org), of course. This will install a
-   recent chromium and chromedriver to run Chrome in headless mode and use this
-   browser and its API to print PDFs globally on your machine.
-   
-   If you prefer a project-local install, just use `npm install` This will
-   install dependencies under `./node_modules`. Be aware that those won't be
-   packaged in your distribution (I will add support for this later).
-
-   On some machines, this doesn't install Chromium and fails. Here's how to get
-   this running on Ubuntu 18:
-   
-   ```
-   DEBIAN_FRONTEND=noninteractive PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=TRUE \
-     apt-get install -y chromium-chromedriver \
-     && npm -g install chrome-headless-render-pdf puppeteer
-   ```
-   
-## wkhtmltopdf
-
-2. Download wkhtmltopdf and place it in your $PATH. Current binaries can be
-   found here: http://wkhtmltopdf.org/downloads.html
-   
-   For the impatient (Ubuntu 18.04 Bionic Beaver):
-   
-   ```
-   apt-get -y install xfonts-base xfonts-75dpi \
-    && wget https://downloads.wkhtmltopdf.org/0.12/0.12.5/wkhtmltox_0.12.5-1.bionic_amd64.deb \
-    && dpkg -i wkhtmltox_0.12.5-1.bionic_amd64.deb
-   ```
-   
-   For other distributions, refer to http://wkhtmltopdf.org/downloads.html – For
-   example, replace `bionic` with `xenial` if you're on Ubuntu 16.04.
-   
-## optional dependencies
-
-3. _optional:_ Install `xvfb` (shouldn't be required with the binary mentioned above):
-
-   To use other wkhtmltopdf executables comiled with an unpatched Qt on systems
-   without an X window server installed, please install `xvfb-run` from your
-   repository (on Debian/Ubuntu: `sudo apt-get install xvfb`).
-   
-   I haven't heard any feedback of people using this feature since a while since
-   the wkhtmltopdf projects ships ready-made binaries. I will deprecate this
-   starting in `0.6.0` since, well, YAGNI.
-
-4. _optional:_ Install `pdftk` via your package manager or homebrew. The project
-   page also contains a Windows installer. On Debian/Ubuntu just type:
-   `apt-get -y install pdftk`
 
 # Usage
 
@@ -110,17 +24,43 @@ Add this to your dependencies in your mix.exs:
     def application do
         [applications: [
             :logger,
-            :pdf_generator # <-- add this
+            :pdf_generator # <-- add this for Elixir <= 1.4
         ]]
     end
 
     defp deps do
         [
             # ... whatever else
-            { :pdf_generator, ">=0.5.5" }, # <-- and this
+            { :pdf_generator, ">=0.6.0" }, # <-- and this
         ]
     end
 ```
+
+If you want to use a locally-installed chromium in **RELEASES** (think `mix
+release`), alter your mixfile to let make take care of comilation and
+dependency-fetching:
+
+```Elixir
+defp deps do
+  [
+    # ... whatever else
+    { :pdf_generator, ">=0.6.0", compile: "make chrome" }
+  ]
+end
+```
+
+This will embed a **300 MB** (yes, that large) Chromium binary into your priv folder
+which will survive packaging as Erlang release. This _can_ be handy as this will
+run on slim Alpine docker images with just NodeJS installed.
+
+The recommended way still is to install Chromium/Puppeteer globally and set the
+`prefer_system_executable: true` option when generating PDFs.
+
+In development: While this usually works, it unfortunately leads to
+pdf_generator to be compiled all the time again and again due to my bad Makefile
+skills. Help is very much appreciated.
+
+## Try it out
 
 Then pass some html to PdfGenerator.generate
 
@@ -166,6 +106,82 @@ Or use the bang-methods:
 filename   = PdfGenerator.generate! "<html>..."
 pdf_binary = PdfGenerator.generate_binary! "<html>..."
 ```
+
+# System prerequisites 
+
+It's either 
+
+* wkhtmltopdf or 
+
+* nodejs (for chromium/puppeteer)
+
+## chrome-headless
+
+This will allow you to make more use of Javascript and advanced CSS as it's just
+your Chrome/Chromium browser rendering your web page as HTML and printing it as
+PDF. Rendering _tend_ to be a bit faster than with wkhtmltopdf. The price tag is
+that PDFs printed with chrome/chromium are usually considerably bigger than
+those generated with wkhtmltopdf.
+
+### global install (great for Docker images)
+
+Run `npm -g install chrome-headless-render-pdf puppeteer`. 
+
+This requires [nodejs](https://nodejs.org), of course. This will install a
+recent chromium and chromedriver to run Chrome in headless mode and use this
+browser and its API to print PDFs globally on your machine.
+   
+If you prefer a project-local install, just use `npm install` This will install
+dependencies under `./node_modules`. Be aware that those won't be packaged in
+your distribution (I will add support for this later).
+
+On some machines, this doesn't install Chromium and fails. Here's how to get
+this running on Ubuntu 18:
+   
+```bash
+DEBIAN_FRONTEND=noninteractive PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=TRUE \
+  apt-get install -y chromium-chromedriver \
+  && npm -g install chrome-headless-render-pdf puppeteer
+```
+
+### local install
+
+Run `make priv/node_modules`. This requires both `nodejs` (insallation see
+above) and `make`. 
+
+Or, run `cd priv && npm install`
+   
+## wkhtmltopdf
+
+2. Download wkhtmltopdf and place it in your $PATH. Current binaries can be
+   found here: http://wkhtmltopdf.org/downloads.html
+   
+   For the impatient (Ubuntu 18.04 Bionic Beaver):
+   
+   ```
+   apt-get -y install xfonts-base xfonts-75dpi \
+    && wget https://downloads.wkhtmltopdf.org/0.12/0.12.5/wkhtmltox_0.12.5-1.bionic_amd64.deb \
+    && dpkg -i wkhtmltox_0.12.5-1.bionic_amd64.deb
+   ```
+   
+   For other distributions, refer to http://wkhtmltopdf.org/downloads.html – For
+   example, replace `bionic` with `xenial` if you're on Ubuntu 16.04.
+   
+## optional dependencies
+
+3. _optional:_ Install `xvfb` (shouldn't be required with the binary mentioned above):
+
+   To use other wkhtmltopdf executables comiled with an unpatched Qt on systems
+   without an X window server installed, please install `xvfb-run` from your
+   repository (on Debian/Ubuntu: `sudo apt-get install xvfb`).
+   
+   I haven't heard any feedback of people using this feature since a while since
+   the wkhtmltopdf projects ships ready-made binaries. I will deprecate this
+   starting in `0.6.0` since, well, YAGNI.
+
+4. _optional:_ Install `pdftk` via your package manager or homebrew. The project
+   page also contains a Windows installer. On Debian/Ubuntu just type:
+   `apt-get -y install pdftk`
 
 # Options and Configuration
 

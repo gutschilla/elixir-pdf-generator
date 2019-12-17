@@ -2,7 +2,7 @@ defmodule PdfGenerator do
 
   require Logger
 
-  @vsn "0.5.8"
+  @vsn "0.6.0"
 
   @moduledoc """
   # PdfGenerator

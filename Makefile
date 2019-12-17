@@ -48,4 +48,7 @@ run-test: check_env _build/test test
 run-dev: check_env _build/dev
 	iex -S mix
 
-build: check_env priv/node_modules _build/prod
+build: check_env _build/prod
+
+chrome: check_env priv/node_modules _build/prod
+

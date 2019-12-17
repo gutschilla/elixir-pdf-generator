@@ -5,7 +5,7 @@ defmodule PdfGenerator.Mixfile do
     [
       app: :pdf_generator,
       name: "PDF Generator",
-      version: "0.5.7",
+      version: "0.6.0",
       elixir: ">= 1.1.0",
       deps: deps(),
       description: description(),

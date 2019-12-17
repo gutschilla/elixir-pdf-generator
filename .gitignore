@@ -5,3 +5,6 @@ erl_crash.dump
 /doc
 .elixir_ls
 /priv/node_modules
+rebar.version
+hex.info
+check_env
