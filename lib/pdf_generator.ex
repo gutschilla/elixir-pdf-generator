@@ -180,8 +180,10 @@ defmodule PdfGenerator do
     chrome_executable  = PdfGenerator.PathAgent.get.chrome_path
     node_executable    = PdfGenerator.PathAgent.get.node_path
     disable_sandbox    = Application.get_env(:pdf_generator, :disable_chrome_sandbox) || options[:no_sandbox]
-    # FIXME: this won't work in releases
-    js_file = Application.app_dir(:pdf_generator) <> "/../../../../node_modules/chrome-headless-render-pdf/dist/cli/chrome-headless-render-pdf.js"
+
+    # needs `make priv/node_modules` to be run when building
+    priv_dir = :code.priv_dir(:pdf_generator) |> to_string()
+    js_file  = "#{priv_dir}/node_modules/chrome-headless-render-pdf/dist/cli/chrome-headless-render-pdf.js"
 
     {executable, executable_args} =
       if options[:prefer_system_executable] && is_binary(chrome_executable) do
