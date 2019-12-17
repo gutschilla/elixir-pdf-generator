@@ -7,8 +7,12 @@ encryption) for use in Elixir projects.
 {:ok, pdf} = PdfGenerator.generate_binary("<html><body><h1>Yay!</h1></body></html>")
 ```
 
-# Latest release v0.5.5 – v0.5.7 on 2019-06-18
+# Latest release v0.5.5 – v0.5.8 on 2019-12-17
 
+- 0.5.8
+  - **BUGFIX:** documentation: option `pagesize` requires string argument
+    (for example `"letter"` or `"A4"`)
+  - updated some npm dependencies for chromium
 - 0.5.7
   - **BUGFIX:** fix chrome-option parameter handling
 - 0.5.6
@@ -16,7 +20,7 @@ encryption) for use in Elixir projects.
     it's not 8.5 x 11.0 (US letter) but 8.26772 x 11.695 (DIN A4), the former
     being chrome-headless defaults. This is important if you want to create
     proper A4 pages
-  - Users printing **US letter** sized PDFs, please use `page_size: :letter`
+  - Users printing **US letter** sized PDFs, please use `page_size: "letter"`
 - 0.5.5
   - improved documentation on `prefer_system_executable: true` for chrome.
     Thanks to [Martin Richer](https://github.com/richeterre) for rasining this
@@ -98,6 +102,8 @@ those generated with wkhtmltopdf.
 
 # Usage
 
+_Hint:_ In IEX, `h PdfGenerator.generate` is your friend.
+
 Add this to your dependencies in your mix.exs:
 
 ```Elixir
@@ -151,7 +157,7 @@ pass an option to chrome to disable sandboxing. And be aware of the implications
 
 ```Elixir
 html_works_too = "<html><body><h1>I need Docker, baby docker is what I need!"
-{:ok, filename} = PdfGenerator.generate html_works_too, generator: :chrome, no_sandbox: true
+{:ok, filename} = PdfGenerator.generate html_works_too, generator: :chrome, no_sandbox: true, page_size: "letter"
 ```
 
 Or use the bang-methods:
@@ -187,8 +193,8 @@ config :pdf_generator,
 - `filename` - filename for the output pdf file (without .pdf extension, defaults to a random string)
 
 - `page_size`:
-  * defaults to `A4`, see `wkhtmltopdf` for more options
-  * `letter` (for US letter) be translated to 8x11.5 inches (currently, only in chrome).
+  *  defaults to `"A4"`, see `wkhtmltopdf` for more options
+  * `"letter"` (for US letter) be translated to 8x11.5 inches (currently, only in chrome).
 
 - `open_password`:    requires `pdftk`, set password to encrypt PDFs with
 
@@ -254,7 +260,7 @@ config :pdf_generator,
 # Documentation
 
 For more info, read the [docs on hex](http://hexdocs.pm/pdf_generator) or issue
-`h PdfGenerator` in your iex shell.
+`h PdfGenerator.generate` in your iex shell.
 
 # Known issues
 
