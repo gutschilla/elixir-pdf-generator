@@ -37,7 +37,7 @@ Add this to your dependencies in your mix.exs:
 ```
 
 If you want to use a locally-installed chromium in **RELEASES** (think `mix
-release`), alter your mixfile to let make take care of comilation and
+release`), alter your mixfile to let `make` take care of compilation and
 dependency-fetching:
 
 ```Elixir
@@ -60,9 +60,9 @@ In development: While this usually works, it unfortunately leads to
 pdf_generator to be compiled all the time again and again due to my bad Makefile
 skills. Help is very much appreciated.
 
-## Try it out
+# Try it out
 
-Then pass some html to PdfGenerator.generate
+Pass some HTML to PdfGenerator.generate:
 
 ```Elixir
 $ iex -S mix
@@ -82,15 +82,27 @@ Or, pass some URL
 PdfGenerator.generate {:url, "http://google.com"}, page_size: "A5"
 ```
 
-Or, use **chrome-headless** – if you're (most probably) using this as
-dependency, chrome won't be installed to this project directory but globally. We
-currently need to tell PdfGenerator this by setting the
-`prefer_system_executable: true` option. This will be default by v0.6.0.
+Or use the bang-methods:
+
+```Elixir
+filename   = PdfGenerator.generate! "<html>..."
+pdf_binary = PdfGenerator.generate_binary! "<html>..."
+```
+
+## Chrome
+
+Or, use **chrome-headless**.
+
+Unless your mixfile sais `{:pdf_generator, ">=6.0.0", compile: "make chrome"}`
+Chrome won't be installed into your application. Please set the
+`prefer_system_executable: true` option in this case.
 
 ```Elixir
 html_works_too = "<html><body><h1>Minimalism!"
 {:ok, filename} = PdfGenerator.generate html_works_too, generator: :chrome, prefer_system_executable: true
 ```
+
+## Docker
 
 If using chrome in a superuser/root environment (read: **docker**), make sure to
 pass an option to chrome to disable sandboxing. And be aware of the implications.
@@ -100,20 +112,13 @@ html_works_too = "<html><body><h1>I need Docker, baby docker is what I need!"
 {:ok, filename} = PdfGenerator.generate html_works_too, generator: :chrome, no_sandbox: true, page_size: "letter"
 ```
 
-Or use the bang-methods:
-
-```Elixir
-filename   = PdfGenerator.generate! "<html>..."
-pdf_binary = PdfGenerator.generate_binary! "<html>..."
-```
-
 # System prerequisites 
 
 It's either 
 
 * wkhtmltopdf or 
 
-* nodejs (for chromium/puppeteer)
+* nodejs (for Chrome-headless/Puppeteer)
 
 ## chrome-headless
 
