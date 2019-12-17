@@ -4,4 +4,4 @@ erl_crash.dump
 *.ez
 /doc
 .elixir_ls
-/node_modules
+/priv/node_modules
