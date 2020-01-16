@@ -15,4 +15,5 @@ jobs:
       - run: mix local.hex --force
       - run: mix local.rebar --force
       - run: mix deps.get
+      - run: cd priv && npm install
       - run: mix test
