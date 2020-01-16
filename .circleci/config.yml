@@ -16,8 +16,9 @@ jobs:
     working_directory: ~/repo
     steps:
       - checkout
-      - run: mix local.hex --force
-      - run: mix local.rebar --force
-      - run: mix deps.get
-      - run: mix test
+      - run: make test
+      # - run: mix local.hex --force
+      # - run: mix local.rebar --force
+      # - run: mix deps.get
+      # - run: mix test
 
