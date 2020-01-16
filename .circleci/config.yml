@@ -12,8 +12,7 @@ jobs:
     steps:
       - checkout
       - run: apk add make nodejs nodejs-npm wkhtmltopdf
-      - run: make test
-      # - run: mix local.hex --force
-      # - run: mix local.rebar --force
-      # - run: mix deps.get
-      # - run: mix test
+      - run: mix local.hex --force
+      - run: mix local.rebar --force
+      - run: mix deps.get
+      - run: mix test
