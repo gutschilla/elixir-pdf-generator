@@ -11,7 +11,7 @@ jobs:
     working_directory: ~/repo
     steps:
       - checkout
-      - run: apk add make nodejs nodejs-npm wkhtmltopdf xvfb
+      - run: apk add make nodejs nodejs-npm wkhtmltopdf xvfb-run
       - run: mix local.hex --force
       - run: mix local.rebar --force
       - run: mix deps.get
