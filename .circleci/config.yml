@@ -16,4 +16,5 @@ jobs:
       - run: mix local.rebar --force
       - run: mix deps.get
       - run: cd priv && npm install
+      - run: npm -g install chrome-headless-render-pdf puppeteer
       - run: mix test
