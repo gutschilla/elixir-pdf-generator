@@ -6,19 +6,14 @@ jobs:
   build:
     docker:
       # specify the version here
-      - image: circleci/elixir:1.4
-
-      # Specify service dependencies here if necessary
-      # CircleCI maintains a library of pre-built images
-      # documented at https://circleci.com/docs/2.0/circleci-images/
-      # - image: circleci/postgres:9.4
-
+      - image: elixir:1.9.4-alpine
+      # - image: circleci/elixir:1.4
     working_directory: ~/repo
     steps:
       - checkout
+      - run: apk add make nodejs nodejs-npm wkhtmltopdf
       - run: make test
       # - run: mix local.hex --force
       # - run: mix local.rebar --force
       # - run: mix deps.get
       # - run: mix test
-
