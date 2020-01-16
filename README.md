@@ -5,6 +5,8 @@ encryption) for use in Elixir projects.
 
 # Latest release v0.6.0 on 2019-12-17
 
+[![CircleCI](https://circleci.com/gh/gutschilla/elixir-pdf-generator.svg?style=svg)](https://circleci.com/gh/gutschilla/elixir-pdf-generator)
+
 - 0.6.0
   - introducting `make` as build tool (optional) for chromium binaries
     (puppeteer)
