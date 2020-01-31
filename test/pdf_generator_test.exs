@@ -49,6 +49,12 @@ defmodule PdfGeneratorTest do
     assert result |> File.read! |> String.slice(0, 6) == "%PDF-1"
   end
 
+  test "chrome-headless from URL, with local installation of chrome-hedless-render-pdf and puppeteer" do
+    {status, result} = PdfGenerator.generate({:url, "http://google.com"}, generator: :chrome, prefer_local_executable: true)
+    assert status == :ok
+    assert result |> File.read! |> String.slice(0, 6) == "%PDF-1"
+  end
+
   test "chrome's no-sandbox option doesn't crash" do
     {_status, result} = PdfGenerator.generate({:url, "http://google.com"}, generator: :chrome, disable_chrome_sandbox: true)
     assert result |> File.read! |> String.slice(0, 6) == "%PDF-1"
