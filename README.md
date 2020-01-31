@@ -66,7 +66,7 @@ Eventually, if you are using Phoenix and you would like to have your npm package
 option when generating the PDF like this:
 
 ```Elixir
-PdfGenerator.generate(url, generator: :chrome, prefer_local_executable: true)
+PdfGenerator.generate({:url, "http://some-url.com"}, generator: :chrome, prefer_local_executable: true)
 ```
 
 # Try it out
