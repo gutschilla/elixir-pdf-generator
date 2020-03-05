@@ -7,6 +7,10 @@ encryption) for use in Elixir projects.
 
 [![CircleCI](https://circleci.com/gh/gutschilla/elixir-pdf-generator.svg?style=svg)](https://circleci.com/gh/gutschilla/elixir-pdf-generator)
 
+- 0.6.1
+  - documentation about keeping `xvfb` buffer, thanks for your feedback,
+    [kiere](https://github.com/gutschilla/elixir-pdf-generator/issues?q=is%3Aissue+is%3Aopen+author%3Akiere)
+  - 
 - 0.6.0
   - introducting `make` as build tool (optional) for chromium binaries
     (puppeteer)
@@ -159,19 +163,24 @@ Or, run `cd priv && npm install`
    
 ## wkhtmltopdf
 
-2. Download wkhtmltopdf and place it in your $PATH. Current binaries can be
-   found here: http://wkhtmltopdf.org/downloads.html
+- **Alpine** (tested on 3.11): `apk add wkhtmltodf` - gone are the days of
+  manually fumbling around with wkhtmltopdf and its musl preference over glibc.
+
+- **Ubuntu 19.10**: `apt-get install wkhtmltopdf` and you'll have 0.12.5 on $PATH
+
+- **Ubuntu 18.04**: Download wkhtmltopdf and place it in your $PATH. Current
+  binaries can be found here: http://wkhtmltopdf.org/downloads.html
+  
+  For the impatient (Ubuntu 18.04 Bionic Beaver):
    
-   For the impatient (Ubuntu 18.04 Bionic Beaver):
-   
-   ```
-   apt-get -y install xfonts-base xfonts-75dpi \
+  ```
+  apt-get -y install xfonts-base xfonts-75dpi \
     && wget https://downloads.wkhtmltopdf.org/0.12/0.12.5/wkhtmltox_0.12.5-1.bionic_amd64.deb \
     && dpkg -i wkhtmltox_0.12.5-1.bionic_amd64.deb
-   ```
+  ```
    
-   For other distributions, refer to http://wkhtmltopdf.org/downloads.html – For
-   example, replace `bionic` with `xenial` if you're on Ubuntu 16.04.
+  For other distributions, refer to http://wkhtmltopdf.org/downloads.html – For
+  example, replace `bionic` with `xenial` if you're on Ubuntu 16.04.
    
 ## optional dependencies
 
@@ -181,9 +190,8 @@ Or, run `cd priv && npm install`
    without an X window server installed, please install `xvfb-run` from your
    repository (on Debian/Ubuntu: `sudo apt-get install xvfb`).
    
-   I haven't heard any feedback of people using this feature since a while since
-   the wkhtmltopdf projects ships ready-made binaries. I will deprecate this
-   starting in `0.6.0` since, well, YAGNI.
+   I am glad to have received feedback that people are actually using this
+   feature.
 
 4. _optional:_ Install `pdftk` via your package manager or homebrew. The project
    page also contains a Windows installer. On Debian/Ubuntu just type:
