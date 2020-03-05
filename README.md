@@ -7,6 +7,9 @@ encryption) for use in Elixir projects.
 
 [![CircleCI](https://circleci.com/gh/gutschilla/elixir-pdf-generator.svg?style=svg)](https://circleci.com/gh/gutschilla/elixir-pdf-generator)
 
+- 0.6.1
+  - documentation about keeping `xvfb` buffer, thanks for your feedback, [kiere](https://github.com/gutschilla/elixir-pdf-generator/issues?q=is%3Aissue+is%3Aopen+author%3Akiere)
+  - 
 - 0.6.0
   - introducting `make` as build tool (optional) for chromium binaries
     (puppeteer)
@@ -181,9 +184,8 @@ Or, run `cd priv && npm install`
    without an X window server installed, please install `xvfb-run` from your
    repository (on Debian/Ubuntu: `sudo apt-get install xvfb`).
    
-   I haven't heard any feedback of people using this feature since a while since
-   the wkhtmltopdf projects ships ready-made binaries. I will deprecate this
-   starting in `0.6.0` since, well, YAGNI.
+   I am glad to have received feedback that people are actually using this
+   feature.
 
 4. _optional:_ Install `pdftk` via your package manager or homebrew. The project
    page also contains a Windows installer. On Debian/Ubuntu just type:
