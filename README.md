@@ -3,7 +3,7 @@
 A wrapper for both wkhtmltopdf and chrome-headless plus PDFTK (adds in
 encryption) for use in Elixir projects.
 
-# Latest release v0.6.0 on 2019-12-17
+# Latest release v0.6.2 on 2020-03-05
 
 [![CircleCI](https://circleci.com/gh/gutschilla/elixir-pdf-generator.svg?style=svg)](https://circleci.com/gh/gutschilla/elixir-pdf-generator)
 
