@@ -7,10 +7,12 @@ encryption) for use in Elixir projects.
 
 [![CircleCI](https://circleci.com/gh/gutschilla/elixir-pdf-generator.svg?style=svg)](https://circleci.com/gh/gutschilla/elixir-pdf-generator)
 
+- 0.6.2
+  - **BUGFIX:** missing `priv` directory in hex release prevented `make chrome`
+    to work for project-local chrome-headless-redereder-pdf binary
 - 0.6.1
   - documentation about keeping `xvfb` buffer, thanks for your feedback,
     [kiere](https://github.com/gutschilla/elixir-pdf-generator/issues?q=is%3Aissue+is%3Aopen+author%3Akiere)
-  - 
 - 0.6.0
   - introducting `make` as build tool (optional) for chromium binaries
     (puppeteer)
