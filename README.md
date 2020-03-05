@@ -45,8 +45,9 @@ dependency-fetching:
 ```Elixir
 defp deps do
   [
-    # ... whatever else
-    { :pdf_generator, ">=0.6.0", compile: "make chrome" }
+    { :pdf_generator, ">=0.6.2", compile: "make chrome" }
+    # if you run into issues try
+    # {:pdf_generator, "~> 0.6.2", github: "gutschilla/elixir-pdf-generator", compile: "make chrome"}
   ]
 end
 ```

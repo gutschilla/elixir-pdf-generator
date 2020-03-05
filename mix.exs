@@ -5,7 +5,7 @@ defmodule PdfGenerator.Mixfile do
     [
       app: :pdf_generator,
       name: "PDF Generator",
-      version: "0.6.0",
+      version: "0.6.2",
       elixir: ">= 1.1.0",
       deps: deps(),
       description: description(),
@@ -34,7 +34,7 @@ defmodule PdfGenerator.Mixfile do
 
   defp package do
     [
-     files: ["lib", "mix.exs", "README.md", "LICENSE", "test"],
+     files: ["lib", "mix.exs", "README.md", "LICENSE", "test", "priv"],
      maintainers: ["Martin Gutsch"],
      licenses: ["MIT"],
      links: %{
