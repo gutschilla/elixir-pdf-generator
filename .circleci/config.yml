@@ -78,6 +78,9 @@ workflows:
       - build_alpine:
           name: alpine-elixir-3-11
           version: "3.11"
+      - build_alpine:
+          name: alpine-elixir-3-12
+          version: "3.12"
       - build_elixir:
           name: elixir-1-9
           version: "1.9.4"
