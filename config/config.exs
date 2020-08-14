@@ -8,5 +8,8 @@ config :pdf_generator,
   # allow chrome to run as root
   disable_chrome_sandbox: true
 
-import_config "#{Mix.env}.exs"
-
+if Mix.env() == :test do
+  config :pdf_generator,
+    command_prefix: "xvfb-run",
+    raise_on_missing_wkhtmltopdf_binary: true
+end
