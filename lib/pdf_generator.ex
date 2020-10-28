@@ -60,15 +60,14 @@ defmodule PdfGenerator do
       import Supervisor.Spec, warn: false
 
       children = [
-        # Define workers and child supervisors to be supervised
-        # worker(TestApp.Worker, [arg1, arg2, arg3])
-        worker(
-          PdfGenerator.PathAgent, [[
+        %{
+          id: PdfGenerator.PathAgent,
+          start: {PdfGenerator.PathAgent, :start_link, [[
             wkhtml_path:                         Application.get_env(:pdf_generator, :wkhtml_path),
             pdftk_path:                          Application.get_env(:pdf_generator, :pdftk_path),
             raise_on_missing_wkhtmltopdf_binary: Application.get_env(:pdf_generator, :raise_on_missing_wkhtmltopdf_binary, true),
-          ]]
-        )
+          ]]}
+        }
       ]
 
       opts = [strategy: :one_for_one, name: PdfGenerator.Supervisor]
