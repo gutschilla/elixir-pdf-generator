@@ -116,7 +116,7 @@ defmodule PdfGenerator do
   @type url           :: binary()
   @type html          :: binary()
   @type pdf_file_path :: binary()
-  @type content       :: html | {:ok, url}
+  @type content       :: html | {:url, url} | {:html, html}
   @type reason        :: atom() | {atom(), any}
   @type opts          :: keyword()
   @type path          :: binary()
