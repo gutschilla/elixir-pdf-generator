@@ -13,7 +13,7 @@ defmodule PdfGenerator.PathAgent do
 
   The idea is to perform this kind of auto-configuration at startup and then
   store the values in this agent. The same could probably be achieved with
-  Application.put_env/3. Comments on this welcome. Until then, this just owrks.
+  `Application.put_env/3`. Comments on this welcome. Until then, this just works.
   """
 
   @name __MODULE__
@@ -54,9 +54,10 @@ defmodule PdfGenerator.PathAgent do
   wkhtmltopdf) exists on path. Raises an error if corresponding options are set
   to true:
 
-  - :raise_on_missing_wkhtmltopdf_binary
-  - :raise_on_missing_chrome_binary
-  - :raise_on_missing_binaries -> raises on eiter binary missing
+    * `:raise_on_missing_wkhtmltopdf_binary`
+    * `:raise_on_missing_chrome_binary`
+    * `:raise_on_missing_binaries` -> raises on either binary missing
+
   """
   def raise_or_continue(options) do
     wkhtml_exists = File.exists?(options[:wkhtml_path] || "")
