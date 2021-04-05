@@ -1,52 +1,63 @@
 defmodule PdfGenerator.Mixfile do
   use Mix.Project
 
+  @source_url "https://github.com/gutschilla/elixir-pdf-generator"
+  @version "0.6.2"
+
   def project do
     [
       app: :pdf_generator,
       name: "PDF Generator",
-      version: "0.6.2",
+      version: @version,
       elixir: ">= 1.1.0",
+      build_embedded: Mix.env() == :prod,
+      start_permanent: Mix.env() == :prod,
       deps: deps(),
-      description: description(),
       package: package(),
-      build_embedded: Mix.env == :prod,
-      start_permanent: Mix.env == :prod
+      docs: docs()
     ]
   end
 
-  # Configuration for the OTP application
-  #
-  # Type `mix help compile.app` for more information
   def application do
     [
       applications: [:logger],
-      mod: { PdfGenerator, [] }
+      mod: {PdfGenerator, []}
     ]
-  end
-
-  def description do
-    """
-    A wrapper for wkhtmltopdf and chrome-headless(puppeteer) with optional
-    support for encryption via pdftk.
-    """
   end
 
   defp package do
     [
-     files: ["lib", "mix.exs", "README.md", "LICENSE", "test", "priv"],
-     maintainers: ["Martin Gutsch"],
-     licenses: ["MIT"],
-     links: %{
-        "GitHub" => "https://github.com/gutschilla/elixir-pdf-generator"
+      description:
+        "A wrapper for wkhtmltopdf and chrome-headless (puppeteer) with optional " <>
+          "support for encryption via pdftk.",
+      files: ["lib", "mix.exs", "README.md", "LICENSE", "test", "priv"],
+      maintainers: ["Martin Gutsch"],
+      licenses: ["MIT"],
+      links: %{
+        "Changelog" => "https://hexdocs.pm/elixir-pdf-generator/changelog.html",
+        "GitHub" => @source_url
       }
-     ]
+    ]
   end
 
   defp deps do
     [
-        # communication with external programs
-        {:ex_doc, "~> 0.19", only: :dev, runtime: false}
+      {:ex_doc, ">= 0.0.0", only: :dev, runtime: false}
+    ]
+  end
+
+  defp docs do
+    [
+      extras: [
+        "CHANGELOG.md",
+        "CONTRIBUTING.md",
+        "LICENSE.md": [title: "License"],
+        "README.md": [title: "Overview"]
+      ],
+      main: "readme",
+      source_url: @source_url,
+      source_ref: "v#{@version}",
+      formatters: ["html"]
     ]
   end
 end

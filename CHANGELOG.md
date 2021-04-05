@@ -1,7 +1,7 @@
-# Changes
+# Changelog
 
   - 0.6.0
-    - introducting `make` as build tool (optional) for chromium binaries
+    - introducing `make` as build tool (optional) for chromium binaries
       (puppeteer)
     - **BUGFIX:** documentation: option `pagesize` requires string argument
       (for example `"letter"` or `"A4"`)
@@ -16,7 +16,7 @@
     - Users printing **US letter** sized PDFs, please use `page_size: "letter"`
   - 0.5.5
     - improved documentation on `prefer_system_executable: true` for chrome.
-      Thanks to [Martin Richer](https://github.com/richeterre) for rasining this
+      Thanks to [Martin Richer](https://github.com/richeterre) for raising this
       and a [PR](https://github.com/gutschilla/elixir-pdf-generator/pull/55)
     - improved documentation on `no_sandbox: true` for chrome in dockerized
       environment (running as root)
@@ -74,12 +74,12 @@
       to [Tony van Riet](https://github.com/tonyvanriet)
   - 0.3.6
     - bumped dependencies:
-      * porcelain 2.0.3 to support newer erlangs and remove warnings
+      * porcelain 2.0.3 to support newer Erlang and remove warnings
       * ex_doc 0.16 to remove warnings, remove from runtime
-      * removed explixit earmark
-    - add option to pick output pdf filename, thanks
+      * removed explicit earmark
+    - add option to pick output PDF filename, thanks
       to [praveenperera](https://github.com/praveenperera)
-    - improved README on heroku, corrected typos. Thanks
+    - improved README on Heroku, corrected typos. Thanks
       to [jbhatab](https://github.com/jbhatab)
       and [maggy96](https://github.com/maggy96)
   - 0.3.5
@@ -107,7 +107,7 @@
   - 0.3.3
     - BUGFIX: typo in config/prod.exs
   - 0.3.2
-    - support for command prefixes, most notabably **xvfb-run** to let a
+    - support for command prefixes, most notably **xvfb-run** to let a
       wkhtmltopdf which was compiled without an unpatched version of qt run on
       machines without an x server
     - (add in precompiled, patched binaries for wkhtmltopdf and libjpeg8 that are
@@ -119,9 +119,8 @@
     - make paths configurable in `config/ENV.exs` as well
     - add some tests (Yay!)
     - better README- 0.3.0
-  - 0.2.0 
+  - 0.2.0
     - adding support for PDFTK to create encrypted PDFs
     - **API-CHANGE** PdfGenerator.generate now returns tuple `{:ok, file_name}`
       instead of just `file_name`
     - Adding some docs, issue `h PdfGenerator` in your iex shell for more info
-
