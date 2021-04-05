@@ -1,20 +1,17 @@
 defmodule PdfGenerator do
-
   require Logger
 
   @vsn "0.6.0"
 
   @moduledoc """
-  # PdfGenerator
-
   Provides a simple wrapper around [wkhtmltopdf](http://wkhtmltopdf.org) and
   [pdftk](https://www.pdflabs.com/tools/pdftk-the-pdf-toolkit/) to generate
   possibly encrypted PDFs from an HTML source.
 
-  # Configuration (optional)
+  ## Configuration (optional)
 
   if no or partial configuration is given, PdfGenerator will search for
-  executables on path. This will rais an error when wkhtmltopdf cannot be
+  executables on path. This will raise an error when wkhtmltopdf cannot be
   found.
 
       config :pdf_generator,
@@ -27,28 +24,31 @@ defmodule PdfGenerator do
   startup whether it can find a suitable wkhtmltopdf executable. It's
   generally better to have an app fail at startup than at later runtime.
 
-    def application do
-      [applications: [ .., :pdf_generator, ..], .. ]
-    end
+      def application do
+        [applications: [ .., :pdf_generator, ..], .. ]
+      end
 
   If you don't want to autostart, issue
 
-    PdfGenerator.start wkhtml_path: "/path/to/wkhtml_path"
+      PdfGenerator.start wkhtml_path: "/path/to/wkhtml_path"
 
-  # System requirements
+  ## System requirements
 
-  - wkhtmltopdf or chrome-headless
-  - pdftk (optional, for encrypted PDFs)
+    * wkhtmltopdf or chrome-headless
+
+    * pdftk (optional, for encrypted PDFs)
 
   Precompiled **wkhtmltopdf** binaries can be obtained here:
   http://wkhtmltopdf.org/downloads.html
 
   **pdftk** should be available as package on your system via
 
-   - `apt-get install pdftk` on Debian/Ubuntu
-   - `brew pdftk` on OSX (you'll need homebrew, of course)
-   - Install the Exe-Installer on Windows found the project's homepage (link
-   above)
+    * `apt-get install pdftk` on Debian/Ubuntu
+
+    * `brew pdftk` on OSX (you'll need homebrew, of course)
+
+    * Install the Exe-Installer on Windows found the project's homepage (link
+    above)
 
   """
 
@@ -80,37 +80,47 @@ defmodule PdfGenerator do
   # return file name of generated pdf
 
   @doc """
-  Generates a pdf file from given html string. Returns a string containing a
+  Generates a PDF file from given html string. Returns a string containing a
   temporary file path for that PDF.
 
   ## Options
 
-   * `:generator` – either `chrome` or `wkhtmltopdf` (default)
-   * `:prefer_system_executable` - set to `true` if you installed
-     chrome-headless-render-pdf globally
-   * `:no_sandbox` – disable sandbox for chrome, required to run as root (read: _docker_)
-   * `:page_size` - output page size, defaults to "A4", other options are "letter" (US letter) and "A5"
-   * `:open_password` - password required to open PDF. Will apply encryption to PDF
-   * `:edit_password` - password required to edit PDF
-   * `:shell_params` - list of command-line arguments to wkhtmltopdf or chrome
-     see http://wkhtmltopdf.org/usage/wkhtmltopdf.txt for all options
-   * `:delete_temporary` - true to remove the temporary html generated in
-     the system tmp dir
-   * `:filename` - filename you want for the output PDF (provide without .pdf extension),
-     defaults to a random string
+  * `:generator` – either `chrome` or `wkhtmltopdf` (default)
 
-  # Examples
+  * `:prefer_system_executable` - set to `true` if you installed
+    chrome-headless-render-pdf globally
 
-  pdf_path_1 = PdfGenerator.generate "<html><body><h1>Boom</h1></body></html>"
-  pdf_path_2 = PdfGenerator.generate(
-    "<html><body><h1>Boom</h1></body></html>",
-    page_size:     "letter",
-    open_password: "secret",
-    edit_password: "g3h31m",
-    shell_params: [ "--outline", "--outline-depth3", "3" ],
-    delete_temporary: true,
-    filename: "my_awesome_pdf"
-  )
+  * `:no_sandbox` – disable sandbox for chrome, required to run as root (read: _docker_)
+
+  * `:page_size` - output page size, defaults to "A4", other options are
+    "letter" (US letter) and "A5"
+
+  * `:open_password` - password required to open PDF. Will apply encryption to PDF
+
+  * `:edit_password` - password required to edit PDF
+
+  * `:shell_params` - list of command-line arguments to wkhtmltopdf or chrome
+    see http://wkhtmltopdf.org/usage/wkhtmltopdf.txt for all options
+
+  * `:delete_temporary` - true to remove the temporary html generated in
+    the system tmp dir
+
+  * `:filename` - filename you want for the output PDF (provide without .pdf extension),
+    defaults to a random string
+
+  ## Examples
+
+      pdf_path_1 = PdfGenerator.generate "<html><body><h1>Boom</h1></body></html>"
+      pdf_path_2 = PdfGenerator.generate(
+        "<html><body><h1>Boom</h1></body></html>",
+        page_size:     "letter",
+        open_password: "secret",
+        edit_password: "g3h31m",
+        shell_params: [ "--outline", "--outline-depth3", "3" ],
+        delete_temporary: true,
+        filename: "my_awesome_pdf"
+      )
+
   """
 
   @type url           :: binary()
@@ -167,7 +177,9 @@ defmodule PdfGenerator do
 
   @doc ~s"""
   Returns `{width, height}` tuple for page sizes either as given or for A4 and
-  A5. Defaults to A4 sizes. In inches. Because chrome wants imperial.
+  A5.
+
+  Defaults to A4 sizes. In inches. Because chrome wants imperial.
   """
   def dimensions_for(%{page_width: width, page_height: height}), do: {width, height}
   def dimensions_for(%{page_size: "A4"}),                        do: {"8.26772", "11.695"}
@@ -188,7 +200,7 @@ defmodule PdfGenerator do
         # needs `make priv/node_modules` to be run when building
         :code.priv_dir(:pdf_generator) |> to_string()
       end
-      
+
     js_file  = "#{dir}/node_modules/chrome-headless-render-pdf/dist/cli/chrome-headless-render-pdf.js"
 
     {executable, executable_args} =
@@ -291,11 +303,12 @@ defmodule PdfGenerator do
   defp random_if_undef(any), do: any
 
   @doc """
-  Takes same options as `generate` but will return an
-  `{:ok, binary_pdf_content}` tuple.
+  Takes same options as `generate` but will return an:
 
-  In case option _delete_temporary_ is true, will as well delete the temporary
-  pdf file.
+      `{:ok, binary_pdf_content}` tuple.
+
+  In case option `:delete_temporary` is `true`, will delete the temporary
+  PDF file as well.
   """
   def generate_binary(html, options \\ []) do
     result = generate html, options
