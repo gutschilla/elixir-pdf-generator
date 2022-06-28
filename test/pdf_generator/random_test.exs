@@ -10,7 +10,7 @@ defmodule PdfGenerator.RandomTest do
   end
 
   describe "string/1" do
-    test "returns a random string with the given lenght" do
+    test "returns a random string with the given length" do
       string = PdfGenerator.Random.string(99)
       assert String.valid?(string)
       assert String.length(string) == 99
