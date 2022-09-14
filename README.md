@@ -327,7 +327,7 @@ file a report.
 
 ## Contributing
 
-Contributions (Issues, PRs…) are more than welcome. Please ave a quick read at
+Contributions (Issues, PRs…) are more than welcome. Please have a quick read at
 the [Contribution tips](./CONTRIBUTING.md), though. It's basically about scope
 and kindness.
 
