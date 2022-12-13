@@ -198,6 +198,10 @@ Or, run `cd priv && npm install`
   For other distributions, refer to http://wkhtmltopdf.org/downloads.html – For
   example, replace `bionic` with `xenial` if you're on Ubuntu 16.04.
 
+### weasyprint
+
+  for installation instructions visit https://doc.courtbouillon.org/weasyprint/stable/first_steps.html
+
 ## Optional Dependencies
 
 3. _optional:_ Install `xvfb` (shouldn't be required with the binary mentioned above):
