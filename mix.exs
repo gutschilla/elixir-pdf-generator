@@ -28,7 +28,7 @@ defmodule PdfGenerator.Mixfile do
   defp package do
     [
       description:
-        "A wrapper for wkhtmltopdf and chrome-headless (puppeteer) with optional " <>
+        "A wrapper for wkhtmltopdf, weasyprint and chrome-headless (puppeteer) with optional " <>
           "support for encryption via pdftk.",
       files: ["lib", "mix.exs", "README.md", "LICENSE", "test", "priv"],
       maintainers: ["Martin Gutsch"],

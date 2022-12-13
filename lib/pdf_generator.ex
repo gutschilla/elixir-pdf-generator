@@ -85,7 +85,7 @@ defmodule PdfGenerator do
 
   ## Options
 
-  * `:generator` – either `chrome` or `wkhtmltopdf` (default)
+  * `:generator` – either `weasyprint`, `chrome` or `wkhtmltopdf` (default)
 
   * `:prefer_system_executable` - set to `true` if you installed
     chrome-headless-render-pdf globally
@@ -93,7 +93,7 @@ defmodule PdfGenerator do
   * `:no_sandbox` – disable sandbox for chrome, required to run as root (read: _docker_)
 
   * `:page_size` - output page size, defaults to "A4", other options are
-    "letter" (US letter) and "A5"
+    "letter" (US letter) and "A5" (does not work for weasyprint, set page sizes with @page property in the html)
 
   * `:open_password` - password required to open PDF. Will apply encryption to PDF
 
@@ -132,7 +132,7 @@ defmodule PdfGenerator do
   @type path          :: binary()
   @type html_path     :: path
   @type pdf_path      :: path
-  @type generator     :: :wkhtmltopdf | :chrome
+  @type generator     :: :wkhtmltopdf | :chrome | :weasyprint
 
   @spec generate(content, opts) :: {:ok, pdf_file_path} | {:error, reason}
   def generate(content, opts \\ []) do
@@ -256,6 +256,22 @@ defmodule PdfGenerator do
     {executable, arguments}
   end
 
+  def make_command(:weasyprint, options, content, {html_path, pdf_path}) do
+    executable = PdfGenerator.PathAgent.get.weasyprint_path
+    source =
+      case content do
+        {:url, url} -> url
+        _html       -> html_path
+      end
+    shell_params = options[:shell_params] || []
+    arguments = List.flatten([
+      source, pdf_path,
+      shell_params
+    ])
+    {executable, arguments} |> inspect() |> Logger.debug()
+    {executable, arguments}
+  end
+
   defp maybe_delete_temp(true,    file), do: File.rm(file)
   defp maybe_delete_temp(_falsy, _file), do: :ok
 
@@ -271,6 +287,7 @@ defmodule PdfGenerator do
   defp result_ok(:chrome,     _string,          0), do: true
   defp result_ok(:chrome,     _string, _exit_code), do: false
   defp result_ok(:wkhtmltopdf, string, _exit_code), do: String.match?(string, ~r/Done/ms)
+  defp result_ok(:weasyprint, _string,          0), do: true
 
   defp get_command_prefix(options) do
     options[:command_prefix] || Application.get_env(:pdf_generator, :command_prefix)

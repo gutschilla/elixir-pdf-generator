@@ -5,6 +5,7 @@ defmodule PdfGenerator.PathAgent do
     pdftk_path:  nil,
     chrome_path: nil,
     node_path:   nil,
+    weasyprint_path: nil
   ]
 
   @moduledoc """
@@ -30,6 +31,7 @@ defmodule PdfGenerator.PathAgent do
         pdftk_path:  System.find_executable("pdftk"),
         chrome_path: System.find_executable("chrome-headless-render-pdf"),
         node_path:   System.find_executable("nodejs") || System.find_executable("node"),
+        weasyprint_path: System.find_executable("weasyprint"),
       ]
       ++ paths_from_options
       |> Enum.dedup()
