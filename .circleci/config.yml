@@ -1,20 +1,86 @@
-# Elixir CircleCI 2.0 configuration file
-#
-# Check https://circleci.com/docs/2.0/language-elixir/ for more details
-version: 2
-jobs:
-  build:
+version: 2.1
+commands:
+  install_dependencies:
+    steps:
+      - run:
+          command: mix deps.get
+      - run:
+          command: npm install
+          working_directory: priv
+      - run:
+          command: npm -g install chrome-headless-render-pdf puppeteer
+          environment:
+            DEBIAN_FRONTEND: "noninteractive"
+            PUPPETEER_SKIP_CHROMIUM_DOWNLOAD: "TRUE"
+  install_elixir:
+    steps:
+      - run:
+          command: apk add --no-cache elixir
+  setup_elixir:
+    steps:
+      - run:
+          command: apk add --no-cache make nodejs nodejs-npm wkhtmltopdf xvfb-run chromium-chromedriver chromium
+      - run:
+          command: mix local.hex --force
+      - run:
+          command: mix local.rebar --force
+executors:
+  alpine:
     docker:
-      # specify the version here
-      - image: elixir:1.9.4-alpine
-      # - image: circleci/elixir:1.4
+      - image: alpine:<< parameters.version >>
+    parameters:
+      version:
+        default: ""
+        type: string
     working_directory: ~/repo
+  elixir:
+    docker:
+      - image: elixir:<< parameters.version >>-alpine
+    parameters:
+      version:
+        default: ""
+        type: string
+    working_directory: ~/repo
+jobs:
+  build_alpine:
+    executor:
+      name: alpine
+      version: << parameters.version >>
+    parameters:
+      version:
+        default: ""
+        type: string
     steps:
       - checkout
-      - run: apk add make nodejs nodejs-npm wkhtmltopdf xvfb-run chromium-chromedriver chromium
-      - run: mix local.hex --force
-      - run: mix local.rebar --force
-      - run: mix deps.get
-      - run: cd priv && npm install
-      - run: DEBIAN_FRONTEND=noninteractive PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=TRUE npm -g install chrome-headless-render-pdf puppeteer
+      - install_elixir
+      - setup_elixir
+      - install_dependencies
       - run: mix test
+  build_elixir:
+    executor:
+      name: elixir
+      version: << parameters.version >>
+    parameters:
+      version:
+        default: ""
+        type: string
+    steps:
+      - checkout
+      - setup_elixir
+      - install_dependencies
+      - run: mix test
+workflows:
+  ci:
+    jobs:
+      - build_alpine:
+          name: alpine-elixir-3-11
+          version: "3.11"
+      - build_alpine:
+          name: alpine-elixir-3-12
+          version: "3.12"
+      - build_elixir:
+          name: elixir-1-9
+          version: "1.9.4"
+      - build_elixir:
+          name: elixir-1-10
+          version: "1.10.4"
